@@ -31,6 +31,11 @@ namespace Framework.DBC
             Dictionary<uint, T> dict = new Dictionary<uint, T>();
             
             string path = WorldConfig.DataPath + "/dbc/" + FileName;
+            if (!File.Exists(path))
+            {
+                Logging.Log.Message(Logging.LogType.ERROR, "DBC File {0} not found", FileName);
+                return null;
+            }
             try
             {
                 using (BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read), Encoding.UTF8))
