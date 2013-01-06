@@ -44,73 +44,74 @@ namespace WorldServer.Game.Chat.Commands
                 ChatHandler.SendMessageByType(ref session, 0, 0, "Fly mode disabled.");
             }
         }
+
         [ChatCommand("appear", "Usage: !appear #CharName for teleport to Character")]
-        public static void Appear(string[] args, ref WorldClass session)
+        public static void Appear(string[] args, ref WorldClass srcSeassion)
         {
-            var pChar = session.Character;
-            string AppName = CommandParser.Read<string>(args, 1);
-            WorldClass AppSeassion = Managers.WorldManager.GetInstance().GetSession(AppName);
-            if (AppSeassion != null)
+            var srcChar = srcSeassion.Character;
+            string dstName = CommandParser.Read<string>(args, 1);
+            WorldClass dstSeassion = Managers.WorldManager.GetInstance().GetSession(dstName);
+            if (dstSeassion != null)
             {
-                var pAppChar = AppSeassion.Character;
-                if (session.Character.Map == pAppChar.Map)
+                var dstChar = dstSeassion.Character;
+                if (srcSeassion.Character.Map == dstChar.Map)
                 {
-                    MoveHandler.HandleMoveTeleport(ref session, pAppChar.Position);
-                    ObjectMgr.SetPosition(ref pChar, pAppChar.Position);
+                    MoveHandler.HandleMoveTeleport(ref srcSeassion, dstChar.Position);
+                    ObjectMgr.SetPosition(ref srcChar, dstChar.Position);
                 }
                 else
                 {
-                    MoveHandler.HandleTransferPending(ref session, pAppChar.Map);
-                    MoveHandler.HandleNewWorld(ref session, pAppChar.Position,  pAppChar.Map);
+                    MoveHandler.HandleTransferPending(ref srcSeassion, dstChar.Map);
+                    MoveHandler.HandleNewWorld(ref srcSeassion, dstChar.Position, dstChar.Map);
 
-                    ObjectMgr.SetPosition(ref pChar,  pAppChar.Position);
-                    ObjectMgr.SetMap(ref pChar, pAppChar.Map);
+                    ObjectMgr.SetPosition(ref srcChar, dstChar.Position);
+                    ObjectMgr.SetMap(ref srcChar, dstChar.Map);
 
-                    ObjectHandler.HandleUpdateObjectCreate(ref session);
-                    ChatHandler.SendMessageByType(ref session, 0, 0, "Appear to " + AppName + " Success!");
+                    ObjectHandler.HandleUpdateObjectCreate(ref srcSeassion);
+                    ChatHandler.SendMessageByType(ref srcSeassion, 0, 0, "Appear to " + dstName + " Success!");
                 }
             }
             else
             {
-                ChatHandler.SendMessageByType(ref session, 0, 0, "Character "+AppName+" not Found");
+                ChatHandler.SendMessageByType(ref srcSeassion, 0, 0, "Character " + dstName + " not Found");
             }
         }
+
         [ChatCommand("summon", "Usage: !Summon #CharName for Character teleport to you")]
-        public static void Summon(string[] args, ref WorldClass session)
+        public static void Summon(string[] args, ref WorldClass dstSeassion)
         {
            
-           
-
-            string SummonName = CommandParser.Read<string>(args, 1);
-            WorldClass SommonSeassion = Managers.WorldManager.GetInstance().GetSession(SummonName);
-            if(SommonSeassion != null)
+            string srcName = CommandParser.Read<string>(args, 1);
+            WorldClass srcSeassion = Managers.WorldManager.GetInstance().GetSession(srcName);
+            if (srcSeassion != null)
             {
-                var pSummonChar = SommonSeassion.Character;
-                if (pSummonChar.Map == session.Character.Map)
+                var srcChar = srcSeassion.Character;
+                if (srcSeassion.Character.Map == dstSeassion.Character.Map)
                 {
-                    MoveHandler.HandleMoveTeleport(ref SommonSeassion, session.Character.Position);
-                    ObjectMgr.SetPosition(ref pSummonChar, session.Character.Position);
+                    MoveHandler.HandleMoveTeleport(ref srcSeassion, dstSeassion.Character.Position);
+                    ObjectMgr.SetPosition(ref srcChar, dstSeassion.Character.Position);
+                    ChatHandler.SendMessageByType(ref dstSeassion, 0, 0, "Summon " + srcName + " Success!");
                 }
                 else
                 {
-                    MoveHandler.HandleTransferPending(ref SommonSeassion, session.Character.Map);
-                    MoveHandler.HandleNewWorld(ref SommonSeassion, session.Character.Position, session.Character.Map);
+                    MoveHandler.HandleTransferPending(ref srcSeassion, dstSeassion.Character.Map);
+                    MoveHandler.HandleNewWorld(ref srcSeassion, dstSeassion.Character.Position, dstSeassion.Character.Map);
 
-                    ObjectMgr.SetPosition(ref pSummonChar, session.Character.Position);
-                    ObjectMgr.SetMap(ref pSummonChar, session.Character.Map);
+                    ObjectMgr.SetPosition(ref srcChar, dstSeassion.Character.Position);
+                    ObjectMgr.SetMap(ref srcChar, dstSeassion.Character.Map);
 
-                    ObjectHandler.HandleUpdateObjectCreate(ref SommonSeassion);
-                    ChatHandler.SendMessageByType(ref session, 0, 0, "Summon "+SummonName+ " Success!");
+                    ObjectHandler.HandleUpdateObjectCreate(ref srcSeassion);
+                    ChatHandler.SendMessageByType(ref dstSeassion, 0, 0, "Summon " + srcName + " Success!");
                 }
             }
             else
             {
-                var pChar = session.Character;
-                DB.Characters.Execute("UPDATE characters SET x = ?, y = ?, z = ?, o = ?, map = ? WHERE Name = ?", pChar.Position.X, pChar.Position.Y, pChar.Position.Z, pChar.Position.O, pChar.Map, SummonName);
-                  ChatHandler.SendMessageByType(ref session, 0, 0, "Offline Summon for " + SummonName + " Success!");
-
+                var dstpChar = dstSeassion.Character;
+                DB.Characters.Execute("UPDATE characters SET x = ?, y = ?, z = ?, o = ?, map = ? WHERE Name = ?", dstpChar.Position.X, dstpChar.Position.Y, dstpChar.Position.Z, dstpChar.Position.O, dstpChar.Map, srcName);
+                ChatHandler.SendMessageByType(ref dstSeassion, 0, 0, "Offline Summon for " + srcName + " Success!");
             }
         }
+
         [ChatCommand("walkspeed", "Usage: !walkspeed #speed (Set the current walk speed)")]
         public static void WalkSpeed(string[] args, ref WorldClass session)
         {
