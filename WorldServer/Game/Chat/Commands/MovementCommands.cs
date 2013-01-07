@@ -45,73 +45,6 @@ namespace WorldServer.Game.Chat.Commands
             }
         }
 
-        [ChatCommand("appear", "Usage: !appear #CharName for teleport to Character")]
-        public static void Appear(string[] args, ref WorldClass srcSeassion)
-        {
-            var srcChar = srcSeassion.Character;
-            string dstName = CommandParser.Read<string>(args, 1);
-            WorldClass dstSeassion = Managers.WorldManager.GetInstance().GetSession(dstName);
-            if (dstSeassion != null)
-            {
-                var dstChar = dstSeassion.Character;
-                if (srcSeassion.Character.Map == dstChar.Map)
-                {
-                    MoveHandler.HandleMoveTeleport(ref srcSeassion, dstChar.Position);
-                    ObjectMgr.SetPosition(ref srcChar, dstChar.Position);
-                }
-                else
-                {
-                    MoveHandler.HandleTransferPending(ref srcSeassion, dstChar.Map);
-                    MoveHandler.HandleNewWorld(ref srcSeassion, dstChar.Position, dstChar.Map);
-
-                    ObjectMgr.SetPosition(ref srcChar, dstChar.Position);
-                    ObjectMgr.SetMap(ref srcChar, dstChar.Map);
-
-                    ObjectHandler.HandleUpdateObjectCreate(ref srcSeassion);
-                    ChatHandler.SendMessageByType(ref srcSeassion, 0, 0, "Appear to " + dstName + " Success!");
-                }
-            }
-            else
-            {
-                ChatHandler.SendMessageByType(ref srcSeassion, 0, 0, "Character " + dstName + " not Found");
-            }
-        }
-
-        [ChatCommand("summon", "Usage: !Summon #CharName for Character teleport to you")]
-        public static void Summon(string[] args, ref WorldClass dstSeassion)
-        {
-           
-            string srcName = CommandParser.Read<string>(args, 1);
-            WorldClass srcSeassion = Managers.WorldManager.GetInstance().GetSession(srcName);
-            if (srcSeassion != null)
-            {
-                var srcChar = srcSeassion.Character;
-                if (srcSeassion.Character.Map == dstSeassion.Character.Map)
-                {
-                    MoveHandler.HandleMoveTeleport(ref srcSeassion, dstSeassion.Character.Position);
-                    ObjectMgr.SetPosition(ref srcChar, dstSeassion.Character.Position);
-                    ChatHandler.SendMessageByType(ref dstSeassion, 0, 0, "Summon " + srcName + " Success!");
-                }
-                else
-                {
-                    MoveHandler.HandleTransferPending(ref srcSeassion, dstSeassion.Character.Map);
-                    MoveHandler.HandleNewWorld(ref srcSeassion, dstSeassion.Character.Position, dstSeassion.Character.Map);
-
-                    ObjectMgr.SetPosition(ref srcChar, dstSeassion.Character.Position);
-                    ObjectMgr.SetMap(ref srcChar, dstSeassion.Character.Map);
-
-                    ObjectHandler.HandleUpdateObjectCreate(ref srcSeassion);
-                    ChatHandler.SendMessageByType(ref dstSeassion, 0, 0, "Summon " + srcName + " Success!");
-                }
-            }
-            else
-            {
-                var dstpChar = dstSeassion.Character;
-                DB.Characters.Execute("UPDATE characters SET x = ?, y = ?, z = ?, o = ?, map = ? WHERE Name = ?", dstpChar.Position.X, dstpChar.Position.Y, dstpChar.Position.Z, dstpChar.Position.O, dstpChar.Map, srcName);
-                ChatHandler.SendMessageByType(ref dstSeassion, 0, 0, "Offline Summon for " + srcName + " Success!");
-            }
-        }
-
         [ChatCommand("walkspeed", "Usage: !walkspeed #speed (Set the current walk speed)")]
         public static void WalkSpeed(string[] args, ref WorldClass session)
         {
@@ -243,21 +176,9 @@ namespace WorldServer.Game.Chat.Commands
                 mapId = result.Read<uint>(0, "Map");
             }
 
-            if (pChar.Map == mapId)
-            {
-                MoveHandler.HandleMoveTeleport(ref session, vector);
-                ObjectMgr.SetPosition(ref pChar, vector);
-            }
-            else
-            {
-                MoveHandler.HandleTransferPending(ref session, mapId);
-                MoveHandler.HandleNewWorld(ref session, vector, mapId);
+            pChar.TeleportTo(vector, mapId);
 
-                ObjectMgr.SetPosition(ref pChar, vector);
-                ObjectMgr.SetMap(ref pChar, mapId);
-
-                ObjectHandler.HandleUpdateObjectCreate(ref session);
-            }
+            ObjectHandler.HandleUpdateObjectCreate(ref session);
         }
 
         [ChatCommand("start", "Usage: !start (Teleports yourself to your start position)")]
@@ -277,20 +198,49 @@ namespace WorldServer.Game.Chat.Commands
 
             uint mapId = result.Read<uint>(0, "Map");
 
-            if (pChar.Map == mapId)
+            pChar.TeleportTo(vector, mapId);
+        }
+
+        [ChatCommand("appear", "Usage: !appear #playerName (Teleports yourself to Players position)")]
+        public static void Appear(string[] args, ref WorldClass srcSeassion)
+        {
+            if (args.Length == 1)
             {
-                MoveHandler.HandleMoveTeleport(ref session, vector);
-                ObjectMgr.SetPosition(ref pChar, vector);
+                ChatHandler.SendMessageByType(ref srcSeassion, 0, 0, "Usage: !appear #playerName (Teleports yourself to Players position)");
+                return;
             }
+            var srcChar = srcSeassion.Character;
+            var dstName = CommandParser.Read<string>(args, 1);
+
+            var appearSession = WorldMgr.GetSession(dstName);
+            if (appearSession != null)
+                srcChar.TeleportTo(appearSession.Character.Position, appearSession.Character.Map);
+            else
+                ChatHandler.SendMessageByType(ref srcSeassion, 0, 0, String.Format("Appear failed. Player {0} not found.", dstName));
+        }
+
+        [ChatCommand("summon", "Usage: !summon #playerName (Teleports the Player to your current position)")]
+        public static void Summon(string[] args, ref WorldClass dstSeassion)
+        {
+            if (args.Length == 1)
+            {
+                ChatHandler.SendMessageByType(ref  dstSeassion, 0, 0, "Usage: !appear #playerName (Teleports yourself to Players position)");
+            }
+            string srcName = CommandParser.Read<string>(args, 1);
+            WorldClass srcSeassion = Managers.WorldManager.GetInstance().GetSession(srcName);
+            var dstChar = dstSeassion.Character;
+            if (srcSeassion != null)
+                srcSeassion.Character.TeleportTo(dstSeassion.Character.Position, dstSeassion.Character.Map);
             else
             {
-                MoveHandler.HandleTransferPending(ref session, mapId);
-                MoveHandler.HandleNewWorld(ref session, vector, mapId);
-
-                ObjectMgr.SetPosition(ref pChar, vector);
-                ObjectMgr.SetMap(ref pChar, mapId);
-
-                ObjectHandler.HandleUpdateObjectCreate(ref session);
+                SQLResult result = DB.Characters.Select("SELECT guid FROM characters WHERE name = ?", srcName);
+                if (result.Count > 0)
+                {
+                    DB.Characters.Execute("UPDATE characters SET x = ?, y = ?, z = ?, o = ?, map = ? WHERE guid = ?", dstChar.Position.X, dstChar.Position.Y, dstChar.Position.Z, dstChar.Position.O, dstChar.Map, result.Read<uint>(0, "guid"));
+                    ChatHandler.SendMessageByType(ref dstSeassion, 0, 0, String.Format("Offline Summon for {0} Success!", srcName));
+                }
+                else
+                    ChatHandler.SendMessageByType(ref dstSeassion, 0, 0, String.Format("Summon failed. Player {0} not found!", srcName));
             }
         }
 
