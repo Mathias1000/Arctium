@@ -113,7 +113,7 @@ namespace WorldServer.Game.PacketHandler
         [Opcode(ClientMessage.ObjectUpdateFailed, "16357")]
         public static void HandleObjectUpdateFailed(ref PacketReader packet, ref WorldClass session)
         {
-            byte[] guidMask = { 6, 1, 7, 5, 0, 4, 2, 3 };
+            byte[] guidMask = { 5, 3, 0, 6, 1, 4, 2, 7 };
             byte[] guidBytes = { 2, 3, 7, 4, 5, 1, 0, 6 };
 
             BitUnpack GuidUnpacker = new BitUnpack(packet);

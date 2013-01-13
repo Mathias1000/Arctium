@@ -156,36 +156,32 @@ namespace WorldServer.Game.Packets.PacketHandler
                 Y = packet.ReadFloat()
             };
 
-            guidMask[3] = BitUnpack.GetBit();
             guidMask[6] = BitUnpack.GetBit();
 
             movementValues.HasMovementFlags = !BitUnpack.GetBit();
 
+            guidMask[3] = BitUnpack.GetBit();
+
             movementValues.IsInterpolated = BitUnpack.GetBit();
             bool HasSplineElevation = !BitUnpack.GetBit();
-
-            movementValues.HasRotation = !BitUnpack.GetBit();
 
             guidMask[4] = BitUnpack.GetBit();
 
             movementValues.IsAlive = !BitUnpack.GetBit();
-
-            guidMask[1] = BitUnpack.GetBit();
-
+            movementValues.HasRotation = !BitUnpack.GetBit();
+            bool Unknown3 = BitUnpack.GetBit();
             movementValues.IsTransport = BitUnpack.GetBit();
-
             bool Unknown2 = BitUnpack.GetBit();
 
             guidMask[0] = BitUnpack.GetBit();
-
-            bool Unknown = BitUnpack.GetBit();
+            guidMask[2] = BitUnpack.GetBit();
 
             movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
 
-            guidMask[2] = BitUnpack.GetBit();
+            guidMask[1] = BitUnpack.GetBit();
 
             bool HasPitch = !BitUnpack.GetBit();
-            bool Unknown3 = BitUnpack.GetBit();
+            bool Unknown4 = BitUnpack.GetBit();
 
             guidMask[5] = BitUnpack.GetBit();
             guidMask[7] = BitUnpack.GetBit();
@@ -1084,6 +1080,2354 @@ namespace WorldServer.Game.Packets.PacketHandler
             newWorld.WriteFloat(vector.Z);
 
             session.Send(ref newWorld);
+        }
+
+        [Opcode(ClientMessage.MoveTurnWithMouse, "16357")]
+        public static void HandleMoveTurnWithMouse(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4()
+            {
+                Z = packet.ReadFloat(),
+                Y = packet.ReadFloat(),
+                X = packet.ReadFloat()
+            };
+
+            guidMask[6] = BitUnpack.GetBit();
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+            movementValues.HasRotation = !BitUnpack.GetBit();
+            guidMask[4] = BitUnpack.GetBit();
+            movementValues.IsTransport = BitUnpack.GetBit();
+            bool HasSplineElevation = !BitUnpack.GetBit();
+            guidMask[1] = BitUnpack.GetBit();
+            guidMask[5] = BitUnpack.GetBit();
+            guidMask[7] = BitUnpack.GetBit();
+            uint counter = BitUnpack.GetBits<uint>(24);
+            guidMask[3] = BitUnpack.GetBit();
+            bool HasPitch = !BitUnpack.GetBit();
+            bool Unknown3 = BitUnpack.GetBit();
+            bool Unknown4 = BitUnpack.GetBit();
+            bool HasTime = !BitUnpack.GetBit();
+            guidMask[2] = BitUnpack.GetBit();
+            guidMask[0] = BitUnpack.GetBit();
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+            movementValues.IsAlive = !BitUnpack.GetBit();
+            bool Unknown2 = BitUnpack.GetBit();
+            bool Unknown = BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport) 
+            {
+                bool vehicleUnknown2 = BitUnpack.GetBit();
+                vehicleGuidMask[3] = BitUnpack.GetBit();
+                vehicleGuidMask[5] = BitUnpack.GetBit();
+                vehicleGuidMask[7] = BitUnpack.GetBit(); 
+                bool vehicleUnknown1 = BitUnpack.GetBit();
+                vehicleGuidMask[6] = BitUnpack.GetBit(); 
+                vehicleGuidMask[0] = BitUnpack.GetBit();
+                vehicleGuidMask[1] = BitUnpack.GetBit(); 
+                vehicleGuidMask[4] = BitUnpack.GetBit();  
+                vehicleGuidMask[2] = BitUnpack.GetBit();
+            }
+
+            if (movementValues.IsInterpolated)
+                movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+
+            /*if (movementValues.IsTransport)
+            {
+            	Vector4 vehiclevector = new Vector4();
+            	byte _88 = packet.ReadUInt8();
+            	if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            	if ( vehicleUnknown2 ) packet.ReadUInt32(); 
+            	uint _23 = packet.ReadUInt32();
+                if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Z = packet.ReadFloat();
+                vehiclevector.Y = packet.ReadFloat();
+                vehiclevector.X = packet.ReadFloat();
+            	if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            	if ( vehicleUnknown1 ) packet.ReadUInt32();
+            	if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.O = packet.ReadFloat();
+            	if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+	            if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+	            if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            }*/
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            /*if (movementValues.IsInterpolated)
+            {
+	            if (movementValues.IsInterpolated2)
+	            {
+                    float _35 = packet.ReadFloat();
+                    float _33 = packet.ReadFloat();
+                    float _34 = packet.ReadFloat();
+                }
+                uint _30 = packet.ReadUInt32();
+                float _31 = packet.ReadFloat();
+            }*/
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+        }
+
+        [Opcode(ClientMessage.MovePitchWithMouse, "16357")]
+        public static void HandleMovePitchWithMouse(ref PacketReader packet, ref WorldClass session)
+        {
+
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4()
+            {
+                Y = packet.ReadFloat(),
+                Z = packet.ReadFloat(),
+                X = packet.ReadFloat()
+            };
+
+            guidMask[5] = BitUnpack.GetBit();
+            guidMask[6] = BitUnpack.GetBit();
+
+            movementValues.IsAlive = !BitUnpack.GetBit();
+
+            bool Unknown4 = BitUnpack.GetBit();
+
+            movementValues.IsTransport = BitUnpack.GetBit();
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            bool Unknown3 = BitUnpack.GetBit();
+
+            guidMask[1] = BitUnpack.GetBit();
+            guidMask[0] = BitUnpack.GetBit();
+            guidMask[4] = BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+            movementValues.HasRotation = !BitUnpack.GetBit();
+
+            bool HasTime = !BitUnpack.GetBit();
+
+            guidMask[2] = BitUnpack.GetBit();
+            guidMask[7] = BitUnpack.GetBit();
+
+            bool Unknown = BitUnpack.GetBit();
+
+            bool HasSplineElevation = !BitUnpack.GetBit();
+
+            guidMask[3] = BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+            bool Unknown2 = BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+                vehicleGuidMask[6] = BitUnpack.GetBit(); 
+                bool vehicleUnknown2 = BitUnpack.GetBit();
+                vehicleGuidMask[1] = BitUnpack.GetBit();
+                vehicleGuidMask[0] = BitUnpack.GetBit(); 
+                vehicleGuidMask[2] = BitUnpack.GetBit();
+                vehicleGuidMask[7] = BitUnpack.GetBit();
+                vehicleGuidMask[5] = BitUnpack.GetBit();
+                bool vehicleUnknown1 = BitUnpack.GetBit(); 
+                vehicleGuidMask[3] = BitUnpack.GetBit(); 
+                vehicleGuidMask[4] = BitUnpack.GetBit();
+            }*/
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            /*if (movementValues.IsInterpolated)
+                movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++) packet.ReadUInt32();
+
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+
+            /*if (movementValues.IsTransport)
+            {
+            	Vector4 vehiclevector = new Vector4();
+            	uint _23 = packet.ReadUInt32();
+                vehiclevector.X = packet.ReadFloat();
+                vehiclevector.Z = packet.ReadFloat();
+            	if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            	byte _88 = packet.ReadUInt8();
+            	if ( vehicleUnknown2 ) packet.ReadUInt32();
+            	if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Y = packet.ReadFloat();
+            	if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.O = packet.ReadFloat();
+                if ( vehicleUnknown1 ) packet.ReadUInt32();
+            	if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            }
+
+            if (movementValues.IsInterpolated)
+            {
+	            if (movementValues.IsInterpolated2)
+	            {
+                    float _35 = packet.ReadFloat();
+                    float _34 = packet.ReadFloat();
+                    float _33 = packet.ReadFloat();
+                }
+                float _31 = packet.ReadFloat();
+                uint _30 = packet.ReadUInt32();
+            }*/
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+        }
+
+        [Opcode(ClientMessage.MoveJump, "16357")]
+        public static void HandleMoveJump(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4()
+            {
+                Z = packet.ReadFloat(),
+                X = packet.ReadFloat(),
+                Y = packet.ReadFloat()
+            };
+
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+
+            guidMask[7] = BitUnpack.GetBit();
+
+            movementValues.IsAlive = !BitUnpack.GetBit();
+
+            bool Unknown4 = BitUnpack.GetBit();
+
+            guidMask[4] = BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+
+            guidMask[0] = BitUnpack.GetBit();
+
+            bool Unknown = BitUnpack.GetBit();
+
+            guidMask[2] = BitUnpack.GetBit();
+
+            movementValues.IsTransport = BitUnpack.GetBit();
+
+            bool Unknown3 = BitUnpack.GetBit();
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            bool Unknown2 = BitUnpack.GetBit();
+
+            guidMask[1] = BitUnpack.GetBit();
+            guidMask[5] = BitUnpack.GetBit();
+
+            bool HasSplineElevation = !BitUnpack.GetBit();
+
+            guidMask[6] = BitUnpack.GetBit();
+            guidMask[3] = BitUnpack.GetBit();
+
+            movementValues.HasRotation = !BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+            bool HasTime = !BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+            	vehicleGuidMask[7] = BitUnpack.GetBit();
+            	vehicleGuidMask[0] = BitUnpack.GetBit();
+            	vehicleGuidMask[1] = BitUnpack.GetBit();
+            	bool vehicleUnknown2 = BitUnpack.GetBit();
+            	bool vehicleUnknown1 = BitUnpack.GetBit();
+            	vehicleGuidMask[4] = BitUnpack.GetBit();
+            	vehicleGuidMask[3] = BitUnpack.GetBit();
+            	vehicleGuidMask[2] = BitUnpack.GetBit();
+            	vehicleGuidMask[6] = BitUnpack.GetBit();
+            	vehicleGuidMask[5] = BitUnpack.GetBit();
+            }*/
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            /*if (movementValues.IsInterpolated)
+		        movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            /*if (movementValues.IsTransport)
+            {
+            	Vector4 vehiclevector = new Vector4();
+            	if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+                if ( vehicleUnknown1 ) uint _25 = packet.ReadUInt32();
+                vehiclevector.Z = packet.ReadFloat();
+                if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            	if ( vehicleUnknown2 ) uint _27 = packet.ReadUInt32();
+            	if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Y = packet.ReadFloat();
+            	byte _88 = packet.ReadUInt8();
+            	uint _23 = packet.ReadUInt32();
+            	if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.O = packet.ReadFloat();
+            	if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.X = packet.ReadFloat();
+            	if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1)
+            }*/
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            /*if (movementValues.IsInterpolated)
+            {
+	            if (movementValues.IsInterpolated2)
+	            {
+                    float _33 = packet.ReadFloat();
+                    float _34 = packet.ReadFloat();
+                    float _35 = packet.ReadFloat();
+                }
+                uint _30 = packet.ReadUInt32();
+                float _31 = packet.ReadFloat();
+            }*/
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+        }
+
+        [Opcode(ClientMessage.MoveFallStop, "16357")]
+        public static void HandleMoveFallStop(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4()
+            {
+                X = packet.ReadFloat(),
+                Y = packet.ReadFloat(),
+                Z = packet.ReadFloat()
+            };
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            guidMask[2] = BitUnpack.GetBit();
+
+            bool HasTime = !BitUnpack.GetBit();
+
+            bool HasSplineElevation = !BitUnpack.GetBit();
+
+            guidMask[6] = BitUnpack.GetBit();
+            guidMask[0] = BitUnpack.GetBit();
+
+            movementValues.IsTransport = BitUnpack.GetBit();
+
+            bool Unknown3 = BitUnpack.GetBit();
+            bool Unknown = BitUnpack.GetBit();
+
+            guidMask[4] = BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+
+            movementValues.HasRotation = !BitUnpack.GetBit();
+
+            bool Unknown2 = BitUnpack.GetBit();
+
+            guidMask[1] = BitUnpack.GetBit();
+
+            movementValues.IsAlive = !BitUnpack.GetBit();
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+
+            guidMask[5] = BitUnpack.GetBit();
+            guidMask[7] = BitUnpack.GetBit();
+            guidMask[3] = BitUnpack.GetBit();
+
+            bool Unknown4 = BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+            	vehicleGuidMask[2] = BitUnpack.GetBit();
+            	vehicleGuidMask[4] = BitUnpack.GetBit();
+            	vehicleGuidMask[6] = BitUnpack.GetBit();
+            	vehicleGuidMask[1] = BitUnpack.GetBit();
+            	vehicleGuidMask[3] = BitUnpack.GetBit();
+            	bool vehicleUnknown1 = BitUnpack.GetBit();
+            	vehicleGuidMask[5] = BitUnpack.GetBit();
+            	bool vehicleUnknown2 = BitUnpack.GetBit();
+            	vehicleGuidMask[7] = BitUnpack.GetBit();
+            	vehicleGuidMask[0] = BitUnpack.GetBit();
+            }*/
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            /*if (movementValues.IsInterpolated)
+            		movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            /*if (movementValues.IsInterpolated)
+            {
+            	float _31 = packet.ReadFloat();
+            	if (movementValues.IsInterpolated2)
+            	{
+              	    float _33 = packet.ReadFloat();
+                  	float _34 = packet.ReadFloat();
+                  	float _35 = packet.ReadFloat();
+            	}
+            	uint _30 = packet.ReadUInt32();
+            }*/
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            /*if (movementValues.IsTransport)
+            {
+            	Vector4 vehiclevector = new Vector4();
+                vehiclevector.O = packet.ReadFloat();
+            	if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Y = packet.ReadFloat();
+            	if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            	if ( vehicleUnknown2 ) uint _27 = packet.ReadUInt32();
+                vehiclevector.X = packet.ReadFloat();
+            	if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+                if ( vehicleUnknown1 ) packet.ReadUInt32();
+            	if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            	uint _23 = packet.ReadUInt32();
+            	if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Z = packet.ReadFloat();
+            	if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            	byte _88 = packet.ReadUInt8();
+            }*/
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+        }
+
+        [Opcode(ClientMessage.MoveFallLand, "16357")]
+        public static void HandleMoveFallLand(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4()
+            {
+                Y = packet.ReadFloat(),
+                X = packet.ReadFloat(),
+                Z = packet.ReadFloat()
+            };
+
+            guidMask[2] = BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+
+            guidMask[0] = BitUnpack.GetBit();
+
+            bool Unknown2 = BitUnpack.GetBit();
+
+            movementValues.HasRotation = !BitUnpack.GetBit();
+            movementValues.IsAlive = !BitUnpack.GetBit();
+
+            bool Unknown4 = BitUnpack.GetBit();
+            bool Unknown = BitUnpack.GetBit();
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+            bool Unknown3 = BitUnpack.GetBit();
+
+            guidMask[7] = BitUnpack.GetBit();
+
+            movementValues.IsTransport = BitUnpack.GetBit();
+            bool HasTime = !BitUnpack.GetBit();
+
+            guidMask[5] = BitUnpack.GetBit();
+
+            bool HasSplineElevation = !BitUnpack.GetBit();
+
+            guidMask[3] = BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+
+            guidMask[1] = BitUnpack.GetBit();
+            guidMask[4] = BitUnpack.GetBit();
+            guidMask[6] = BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+            	vehicleGuidMask[4] = BitUnpack.GetBit();
+            	vehicleGuidMask[1] = BitUnpack.GetBit();
+            	bool vehicleUnknown2 = BitUnpack.GetBit();
+            	vehicleGuidMask[2] = BitUnpack.GetBit();
+            	vehicleGuidMask[3] = BitUnpack.GetBit();
+            	vehicleGuidMask[7] = BitUnpack.GetBit();
+            	vehicleGuidMask[0] = BitUnpack.GetBit();
+            	bool vehicleUnknown1 = BitUnpack.GetBit();
+            	vehicleGuidMask[5] = BitUnpack.GetBit();
+            	vehicleGuidMask[6] = BitUnpack.GetBit();
+            }
+
+            if (movementValues.IsInterpolated)
+            		movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+
+            /*if (movementValues.IsTransport)
+            {
+            	Vector4 vehiclevector = new Vector4();
+                vehiclevector.X = packet.ReadFloat();
+            	if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+                if ( vehicleUnknown1 ) uint _25 = packet.ReadUInt32();
+            	if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            	byte _88 = packet.ReadUInt8();
+            	if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.O = packet.ReadFloat();
+                vehiclevector.Z = packet.ReadFloat();
+                vehiclevector.Y = packet.ReadFloat();
+            	if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            	uint _23 = packet.ReadUInt32();
+            	if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            	if ( vehicleUnknown2 ) uint _27 = packet.ReadUInt32();
+            	if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            }*/
+
+            if (HasPitch)
+                packet.ReadFloat(); // float _28
+
+            /*if (movementValues.IsInterpolated)
+            {
+            	if (movementValues.IsInterpolated2)
+            	{
+                    float _33 = packet.ReadFloat();
+                    float _34 = packet.ReadFloat();
+                    float _35 = packet.ReadFloat();
+                }
+                float _ 31 = packet.ReadFloat();
+                uint _30 = packet.ReadUInt32();
+            }*/
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+        }
+
+        [Opcode(ClientMessage.MoveStartFlyingUp, "16357")]
+        public static void HandleMoveStartFlyingUp(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4()
+            {
+                X = packet.ReadFloat(),
+                Z = packet.ReadFloat(),
+                Y = packet.ReadFloat(),
+            };
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            bool Unknown3 = BitUnpack.GetBit();
+
+            guidMask[4] = BitUnpack.GetBit();
+            guidMask[7] = BitUnpack.GetBit();
+            guidMask[1] = BitUnpack.GetBit();
+
+            bool Unknown2 = BitUnpack.GetBit();
+
+            guidMask[2] = BitUnpack.GetBit();
+            guidMask[5] = BitUnpack.GetBit();
+
+            bool HasSplineElevation = !BitUnpack.GetBit();
+            movementValues.IsAlive = !BitUnpack.GetBit();
+
+            bool Unknown = BitUnpack.GetBit();
+
+            guidMask[0] = BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+            movementValues.HasRotation = !BitUnpack.GetBit();
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+
+            guidMask[3] = BitUnpack.GetBit();
+
+            bool HasTime = !BitUnpack.GetBit();
+            movementValues.IsTransport = BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+
+            guidMask[6] = BitUnpack.GetBit();
+
+            bool Unknown4 = BitUnpack.GetBit();
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            /*if (movementValues.IsTransport)
+            {
+            	vehicleGuidMask[7] = BitUnpack.GetBit();
+            	vehicleGuidMask[0] = BitUnpack.GetBit();
+
+            	bool vehicleUnknown2 = BitUnpack.GetBit();
+
+            	vehicleGuidMask[4] = BitUnpack.GetBit();
+            	vehicleGuidMask[1] = BitUnpack.GetBit();
+            	vehicleGuidMask[3] = BitUnpack.GetBit();
+            	vehicleGuidMask[6] = BitUnpack.GetBit();
+            	vehicleGuidMask[2] = BitUnpack.GetBit();
+            	bool vehicleUnknown1 = BitUnpack.GetBit();
+            	vehicleGuidMask[5] = BitUnpack.GetBit();
+            }
+
+            if (movementValues.IsInterpolated)
+            		movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            /*if (movementValues.IsTransport)
+            {
+            	Vector4 vehiclevector = new Vector4();
+            	if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+                if ( vehicleUnknown1 ) uint _25 = packet.ReadUInt32();
+                vehiclevector.Z = packet.ReadFloat();
+            	byte _88 = packet.ReadUInt8();
+            	if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Y = packet.ReadFloat();
+            	if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            	uint _23 = packet.ReadUInt32();
+            	if ( vehicleUnknown2 ) uint _27 = packet.ReadUInt32();
+                vehiclevector.O = packet.ReadFloat();
+                vehiclevector.X = packet.ReadFloat();
+            }
+
+            if (movementValues.IsInterpolated)
+            {
+            	if (movementValues.IsInterpolated2)
+            	{
+                    float _35 = packet.ReadFloat();
+                    float _34 = packet.ReadFloat();
+                    float _33 = packet.ReadFloat();
+              }
+              uint _30 = packet.ReadUInt32();
+              float _31 = packet.ReadFloat();
+            }*/
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+        }
+
+        [Opcode(ClientMessage.MoveStartFlyingDown, "16357")]
+        public static void HandleMoveStartFlyingDown(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4()
+            {
+                Z = packet.ReadFloat(),
+                X = packet.ReadFloat(),
+                Y = packet.ReadFloat()
+            };
+
+            movementValues.HasRotation = !BitUnpack.GetBit();
+
+            guidMask[1] = BitUnpack.GetBit();
+
+            movementValues.IsTransport = BitUnpack.GetBit();
+            bool Unknown = BitUnpack.GetBit();
+            bool Unknown3 = BitUnpack.GetBit();
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+            movementValues.IsAlive = !BitUnpack.GetBit();
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+            bool Unknown4 = BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+
+            guidMask[6] = BitUnpack.GetBit();
+            guidMask[4] = BitUnpack.GetBit();
+
+            bool Unknown2 = BitUnpack.GetBit();
+
+            guidMask[2] = BitUnpack.GetBit();
+
+            bool HasTime = !BitUnpack.GetBit();
+
+            guidMask[0] = BitUnpack.GetBit();
+            guidMask[3] = BitUnpack.GetBit();
+
+            bool HasSplineElevation = !BitUnpack.GetBit();
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            guidMask[7] = BitUnpack.GetBit();
+            guidMask[5] = BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+            	vehicleGuidMask[3] = BitUnpack.GetBit();
+            	vehicleGuidMask[4] = BitUnpack.GetBit();
+            	bool vehicleUnknown1 = BitUnpack.GetBit();
+            	vehicleGuidMask[2] = BitUnpack.GetBit();
+            	bool vehicleUnknown2 = BitUnpack.GetBit();
+            	vehicleGuidMask[1] = BitUnpack.GetBit();
+            	vehicleGuidMask[5] = BitUnpack.GetBit();
+            	vehicleGuidMask[7] = BitUnpack.GetBit();
+            	vehicleGuidMask[6] = BitUnpack.GetBit();
+            	vehicleGuidMask[0] = BitUnpack.GetBit();
+            }*/
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            /*if (movementValues.IsInterpolated)
+            		movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+
+            /*if (movementValues.IsTransport)
+            {
+            	Vector4 vehiclevector = new Vector4();
+            	if ( vehicleUnknown2 ) packet.ReadUInt32();
+              vehiclevector.Y = packet.ReadFloat();
+            	if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+              vehiclevector.X = packet.ReadFloat();
+              vehiclevector.Z = packet.ReadFloat();
+            	byte _88 = packet.ReadUInt8();
+              if ( vehicleUnknown1 ) packet.ReadUInt32();
+            	uint _23 = packet.ReadUInt32();
+            	if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+              vehiclevector.O = packet.ReadFloat();
+            	if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            }
+
+            if (movementValues.IsInterpolated)
+            {
+            	if (movementValues.IsInterpolated2)
+            	{
+                float _35 = packet.ReadFloat();
+                float _33 = packet.ReadFloat();
+                float _34 = packet.ReadFloat();
+              }
+              uint _30 = packet.ReadUInt32();
+              float _31 = packet.ReadFloat();
+            }*/
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+        }
+
+        [Opcode(ClientMessage.MoveStopFlying, "16357")]
+        public static void HandleMoveStopFlying(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4()
+            {
+                Z = packet.ReadFloat(),
+                X = packet.ReadFloat(),
+                Y = packet.ReadFloat()
+            };
+
+            movementValues.IsAlive = !BitUnpack.GetBit();
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+
+            bool HasSplineElevation = !BitUnpack.GetBit();
+            bool Unknown = BitUnpack.GetBit();
+            bool HasTime = !BitUnpack.GetBit();
+            bool Unknown3 = BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+
+            bool Unknown2 = BitUnpack.GetBit();
+
+            movementValues.IsTransport = BitUnpack.GetBit();
+
+            bool Unknown4 = BitUnpack.GetBit();
+
+            guidMask[4] = BitUnpack.GetBit();
+            guidMask[7] = BitUnpack.GetBit();
+            guidMask[2] = BitUnpack.GetBit();
+            guidMask[6] = BitUnpack.GetBit();
+            guidMask[3] = BitUnpack.GetBit();
+            guidMask[5] = BitUnpack.GetBit();
+            guidMask[1] = BitUnpack.GetBit();
+            guidMask[0] = BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            movementValues.HasRotation = !BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+            	vehicleGuidMask[0] = BitUnpack.GetBit();
+            	vehicleGuidMask[7] = BitUnpack.GetBit();
+            	bool vehicleUnknown1 = BitUnpack.GetBit();
+            	vehicleGuidMask[1] = BitUnpack.GetBit();
+            	vehicleGuidMask[3] = BitUnpack.GetBit();
+            	vehicleGuidMask[5] = BitUnpack.GetBit();
+            	bool vehicleUnknown2 = BitUnpack.GetBit();
+            	vehicleGuidMask[6] = BitUnpack.GetBit();
+            	vehicleGuidMask[4] = BitUnpack.GetBit();
+            	vehicleGuidMask[2] = BitUnpack.GetBit();
+            }*/
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            /*if (movementValues.IsInterpolated)
+            		bool movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+
+            /*if (movementValues.IsTransport)
+            {
+            	Vector4 vehiclevector = new Vector4();
+            	uint _23 = packet.ReadUInt32();
+              if ( vehicleUnknown1 ) uint _25 = packet.ReadUInt32();
+            	if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+              vehiclevector.O = packet.ReadFloat();
+            	byte _88 = packet.ReadUInt8();
+              vehiclevector.Y = packet.ReadFloat();
+            	if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            	if ( vehicleUnknown2 ) uint _27 = packet.ReadUInt32();
+            	if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+              vehiclevector.X = packet.ReadFloat();
+            	if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+              vehiclevector.Z = packet.ReadFloat();
+            	if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            }*/
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            /*if (movementValues.IsInterpolated)
+            {
+            	if ( movementValues.IsInterpolated2 )
+            	{
+                float _34 = packet.ReadFloat();
+                float _33 = packet.ReadFloat();
+                float _35 = packet.ReadFloat();
+              }
+              uint _30 = packet.ReadUInt32();
+              float _31 = packet.ReadFloat();
+            }*/
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+        }
+
+        [Opcode(ClientMessage.MoveStartStrafeLeft, "16357")]
+        public static void HandleMoveStartStrafeLeft(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4()
+            {
+                Y = packet.ReadFloat(),
+                Z = packet.ReadFloat(),
+                X = packet.ReadFloat()
+            };
+
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+
+            guidMask[4] = BitUnpack.GetBit();
+
+            bool Unknown = BitUnpack.GetBit();
+
+            guidMask[0] = BitUnpack.GetBit();
+
+            movementValues.IsAlive = !BitUnpack.GetBit();
+            movementValues.HasRotation = !BitUnpack.GetBit();
+
+            bool Unknown3 = BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+            bool HasSplineElevation = !BitUnpack.GetBit();
+
+            guidMask[3] = BitUnpack.GetBit();
+
+            bool Unknown2 = BitUnpack.GetBit();
+
+            bool Unknown4 = BitUnpack.GetBit();
+
+            guidMask[6] = BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+
+            guidMask[7] = BitUnpack.GetBit();
+            guidMask[5] = BitUnpack.GetBit();
+
+            movementValues.IsTransport = BitUnpack.GetBit();
+
+            guidMask[2] = BitUnpack.GetBit();
+            guidMask[1] = BitUnpack.GetBit();
+
+            bool HasTime = !BitUnpack.GetBit();
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            /*if (movementValues.IsTransport)
+            {
+                vehicleGuidMask[3] = BitUnpack.GetBit();
+                vehicleGuidMask[4] = BitUnpack.GetBit();
+                vehicleGuidMask[2] = BitUnpack.GetBit();
+                bool vehicleUnknown1 = BitUnpack.GetBit();
+                vehicleGuidMask[1] = BitUnpack.GetBit();
+                vehicleGuidMask[5] = BitUnpack.GetBit();
+                vehicleGuidMask[6] = BitUnpack.GetBit();
+                vehicleGuidMask[7] = BitUnpack.GetBit();
+                bool vehicleUnknown2 = BitUnpack.GetBit();
+                vehicleGuidMask[0] = BitUnpack.GetBit();
+            }*/
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            /*if (movementValues.IsInterpolated)
+                    bool movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+
+            /*if (movementValues.IsTransport)
+            {
+                Vector4 vehiclevector = new Vector4();
+                if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.X = packet.ReadFloat();
+                byte _88 = packet.ReadUInt8();
+                if ( vehicleUnknown1 ) uint _25 = packet.ReadUInt32();
+                vehiclevector.O = packet.ReadFloat();
+                vehiclevector.Y = packet.ReadFloat();
+                if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+                if ( vehicleUnknown2 ) uint _27 = packet.ReadUInt32();
+                uint _23 = packet.ReadUInt32();
+                if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Z = packet.ReadFloat();
+                if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            }
+
+            if (movementValues.IsInterpolated)
+            {
+                float _31 = packet.ReadFloat();
+                if (movementValues.IsInterpolated2)
+                {
+                    float _35 = packet.ReadFloat();
+                    float _33 = packet.ReadFloat();
+                    float _34 = packet.ReadFloat();
+                }
+              uint _30 = packet.ReadUInt32();
+            }*/
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+        }
+
+        [Opcode(ClientMessage.MoveStartStrafeRight, "16357")]
+        public static void HandleMoveStartStrafeRight(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4()
+            {
+                X = packet.ReadFloat(),
+                Z = packet.ReadFloat(),
+                Y = packet.ReadFloat()
+            };
+
+            bool HasPitch = !BitUnpack.GetBit();
+            movementValues.IsAlive = !BitUnpack.GetBit();
+
+            guidMask[5] = BitUnpack.GetBit();
+            guidMask[2] = BitUnpack.GetBit();
+
+            bool Unknown3 = BitUnpack.GetBit();
+
+            guidMask[7] = BitUnpack.GetBit();
+
+            movementValues.IsTransport = BitUnpack.GetBit();
+
+            bool HasSplineElevation = !BitUnpack.GetBit();
+            bool Unknown = BitUnpack.GetBit();
+            movementValues.HasRotation = !BitUnpack.GetBit();
+            bool Unknown4 = BitUnpack.GetBit();
+
+            guidMask[4] = BitUnpack.GetBit();
+            guidMask[0] = BitUnpack.GetBit();
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+            bool HasTime = !BitUnpack.GetBit();
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+
+            guidMask[3] = BitUnpack.GetBit();
+            guidMask[6] = BitUnpack.GetBit();
+
+            bool Unknown2 = BitUnpack.GetBit();
+
+            guidMask[1] = BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+                vehicleGuidMask[6] = BitUnpack.GetBit();
+                vehicleGuidMask[3] = BitUnpack.GetBit();
+                bool vehicleUnknown2 = BitUnpack.GetBit();
+                vehicleGuidMask[2] = BitUnpack.GetBit();
+                bool vehicleUnknown1 = BitUnpack.GetBit();
+                vehicleGuidMask[5] = BitUnpack.GetBit();
+                vehicleGuidMask[1] = BitUnpack.GetBit();
+                vehicleGuidMask[7] = BitUnpack.GetBit();
+                vehicleGuidMask[0] = BitUnpack.GetBit();
+                vehicleGuidMask[4] = BitUnpack.GetBit();
+            }*/
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            /*if (movementValues.IsInterpolated)
+                    movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+
+            /*if (movementValues.IsInterpolated)
+            {
+                if (movementValues.IsInterpolated2)
+                {
+                    float _33 = packet.ReadFloat();
+                    float _35 = packet.ReadFloat();
+                    float _34 = packet.ReadFloat();
+              }
+              uint _30 = packet.ReadUInt32();
+              float _31 = packet.ReadFloat();
+            }
+
+            if (movementValues.IsTransport)
+            {
+                Vector4 vehiclevector = new Vector4();
+                if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Y = packet.ReadFloat();
+                if (vehicleUnknown1) uint _25 = packet.ReadUInt32();
+                if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleUnknown2) uint _27 = packet.ReadUInt32();
+                vehiclevector.O = packet.ReadFloat();
+                uint _23 = packet.ReadUInt32();
+                vehiclevector.Z = packet.ReadFloat();
+                byte _88 = packet.ReadUInt8();
+                if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.X = packet.ReadFloat();
+                if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            }*/
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasPitch) packet.ReadFloat();
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+        }
+
+        [Opcode(ClientMessage.MoveStopStrafe, "16357")]
+        public static void HandleMoveStopStrafe(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4()
+            {
+                X = packet.ReadFloat(),
+                Z = packet.ReadFloat(),
+                Y = packet.ReadFloat()
+            };
+
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+
+            bool HasSplineElevation = !BitUnpack.GetBit();
+
+            bool Unknown = BitUnpack.GetBit();
+
+            guidMask[5] = BitUnpack.GetBit();
+
+            movementValues.IsTransport = BitUnpack.GetBit();
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+            movementValues.HasRotation = !BitUnpack.GetBit();
+
+            guidMask[4] = BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+
+            guidMask[2] = BitUnpack.GetBit();
+
+            bool HasTime = !BitUnpack.GetBit();
+
+            guidMask[1] = BitUnpack.GetBit();
+            guidMask[7] = BitUnpack.GetBit();
+
+            movementValues.IsAlive = !BitUnpack.GetBit();
+
+            bool Unknown3 = BitUnpack.GetBit();
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            bool Unknown4 = BitUnpack.GetBit();
+
+            guidMask[0] = BitUnpack.GetBit();
+            guidMask[6] = BitUnpack.GetBit();
+
+            bool Unknown2 = BitUnpack.GetBit();
+
+            guidMask[3] = BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+                vehicleGuidMask[6] = BitUnpack.GetBit();
+                vehicleGuidMask[1] = BitUnpack.GetBit();
+                bool vehicleUnknown2 = BitUnpack.GetBit();
+                vehicleGuidMask[2] = BitUnpack.GetBit();
+                vehicleGuidMask[5] = BitUnpack.GetBit();
+                vehicleGuidMask[7] = BitUnpack.GetBit();
+                vehicleGuidMask[4] = BitUnpack.GetBit();
+                vehicleGuidMask[3] = BitUnpack.GetBit();
+                vehicleGuidMask[0] = BitUnpack.GetBit();
+                bool vehicleUnknown1 = BitUnpack.GetBit();
+            }*/
+
+            if (movementValues.HasMovementFlags) movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            if (movementValues.HasMovementFlags2) movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            /*if (movementValues.IsInterpolated)
+                    movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++) packet.ReadUInt32();
+
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+
+            /*if (movementValues.IsTransport)
+            {
+                Vector4 vehiclevector = new Vector4();
+                if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+                byte _88 = packet.ReadUInt8();
+                if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+              vehiclevector.Z = packet.ReadFloat();
+                if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+              vehiclevector.Y = packet.ReadFloat();
+                if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+              if (vehicleUnknown1) uint _25 = packet.ReadUInt32();
+                if (vehicleUnknown2) byte _27 = packet.ReadUInt32();
+              vehiclevector.O = packet.ReadFloat();
+                if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+                uint _23 = packet.ReadUInt32();
+              vehiclevector.X = packet.ReadFloat();
+            }*/
+
+            if (movementValues.IsAlive) movementValues.Time = packet.ReadUInt32();
+
+            if (movementValues.HasRotation) vector.O = packet.ReadFloat();
+
+            /*if (movementValues.IsInterpolated)
+            {
+                if (movementValues.IsInterpolated2)
+                {
+                float _35 = packet.ReadFloat();
+                float _34 = packet.ReadFloat();
+                float _33 = packet.ReadFloat();
+              }
+              uint _30 = packet.ReadUInt32();
+              float _31 =  packet.ReadFloat();
+            }*/
+
+            if (HasSplineElevation) packet.ReadFloat();
+
+            if (HasPitch) packet.ReadFloat();
+
+            if (HasTime) movementValues.Time = packet.ReadUInt32();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+        }
+
+        [Opcode(ClientMessage.MoveCollisionAtJump, "16357")]
+        public static void HandleMoveCollisionAtJump(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4()
+            {
+                Z = packet.ReadFloat(),
+                Y = packet.ReadFloat(),
+                X = packet.ReadFloat()
+            };
+
+            bool HasSplineElevation = !BitUnpack.GetBit();
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            guidMask[7] = BitUnpack.GetBit();
+
+            movementValues.IsTransport = BitUnpack.GetBit();
+            bool Unknown = BitUnpack.GetBit();
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+
+            guidMask[3] = BitUnpack.GetBit();
+            guidMask[2] = BitUnpack.GetBit();
+            guidMask[1] = BitUnpack.GetBit();
+
+            movementValues.IsAlive = !BitUnpack.GetBit();
+            bool Unknown2 = BitUnpack.GetBit();
+
+            guidMask[5] = BitUnpack.GetBit();
+            guidMask[0] = BitUnpack.GetBit();
+
+            bool Unknown4 = BitUnpack.GetBit();
+            movementValues.HasRotation = !BitUnpack.GetBit();
+            bool HasTime = !BitUnpack.GetBit();
+
+            guidMask[4] = BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+
+            guidMask[6] = BitUnpack.GetBit();
+
+            bool Unknown3 = BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+                vehicleGuidMask[7] = BitUnpack.GetBit();
+                vehicleGuidMask[5] = BitUnpack.GetBit();
+                vehicleGuidMask[0] = BitUnpack.GetBit();
+                vehicleGuidMask[2] = BitUnpack.GetBit();
+                vehicleGuidMask[3] = BitUnpack.GetBit();
+                vehicleGuidMask[4] = BitUnpack.GetBit();
+                vehicleGuidMask[6] = BitUnpack.GetBit();
+                bool vehicleUnknown2 = BitUnpack.GetBit();
+                bool vehicleUnknown1 = BitUnpack.GetBit();
+                vehicleGuidMask[1] = BitUnpack.GetBit();
+            }*/
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            /*if (movementValues.IsInterpolated)
+                    movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            /*if (movementValues.IsTransport)
+            {
+                Vector4 vehiclevector = new Vector4();
+                if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Z = packet.ReadFloat();
+                if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+                if ( vehicleUnknown2 ) uint _27 = packet.ReadUInt32();
+                vehiclevector.O = packet.ReadFloat();
+                vehiclevector.Y = packet.ReadFloat();
+                uint _23 = packet.ReadUInt32();
+                if ( vehicleUnknown1 ) uint _25 = packet.ReadUInt32();
+                byte _88 = packet.ReadUInt8();
+                if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.X = packet.ReadFloat();
+            }
+
+            if (movementValues.IsInterpolated)
+            {
+                if (movementValues.IsInterpolated2)
+                {
+                    float _35 = packet.ReadFloat();
+                    float _33 = packet.ReadFloat();
+                    float _34 = packet.ReadFloat();
+                }
+                uint _30 = packet.ReadUInt32();
+                float _31 = packet.ReadFloat();
+            }*/
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+        }
+
+        [Opcode(ClientMessage.ForceWalkSpeedChangeAck, "16357")]
+        public static void HandleForceWalkSpeedChangeAck(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4()
+            {
+                Y = packet.ReadFloat(),
+                Z = packet.ReadFloat(),
+                X = packet.ReadFloat()
+            };
+
+            uint zeroes = packet.ReadUInt32();
+            float walkspeed = packet.ReadFloat();
+
+            bool Unknown2 = BitUnpack.GetBit();
+
+            guidMask[6] = BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+            movementValues.IsTransport = BitUnpack.GetBit();
+            bool Unknown3 = BitUnpack.GetBit();
+
+            guidMask[1] = BitUnpack.GetBit();
+            guidMask[2] = BitUnpack.GetBit();
+
+            movementValues.IsAlive = !BitUnpack.GetBit();
+            bool HasTime = !BitUnpack.GetBit();
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            guidMask[0] = BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+
+            guidMask[5] = BitUnpack.GetBit();
+
+            bool Unknown4 = BitUnpack.GetBit();
+            bool HasSplineElevation = !BitUnpack.GetBit();
+
+            guidMask[3] = BitUnpack.GetBit();
+
+            movementValues.HasRotation = !BitUnpack.GetBit();
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+
+            guidMask[7] = BitUnpack.GetBit();
+            guidMask[4] = BitUnpack.GetBit();
+
+            bool Unknown = BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+            	vehicleGuidMask[2] = BitUnpack.GetBit();
+            	vehicleGuidMask[5] = BitUnpack.GetBit();
+            	vehicleGuidMask[4] = BitUnpack.GetBit();
+            	vehicleGuidMask[1] = BitUnpack.GetBit();
+            	vehicleGuidMask[0] = BitUnpack.GetBit();
+            	vehicleGuidMask[3] = BitUnpack.GetBit();
+            	vehicleGuidMask[7] = BitUnpack.GetBit();
+            	vehicleGuidMask[6] = BitUnpack.GetBit();
+            	bool vehicleUnknown1 = BitUnpack.GetBit();
+            	bool vehicleUnknown2 = BitUnpack.GetBit();
+            }*/
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            /*if (movementValues.IsInterpolated)
+            		movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+
+            /*if (movementValues.IsTransport)
+            {
+            	Vector4 vehiclevector = new Vector4();
+            	if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Z = packet.ReadFloat();
+            	if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            	byte _88 = packet.ReadUInt8(); 					  																			 // (BYTE)DATA[88]
+            	if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.X = packet.ReadFloat();
+            	if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+                if ( vehicleUnknown1 ) packet.ReadUInt32();
+                vehiclevector.Y = packet.ReadFloat();
+            	if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            	uint _23 = packet.ReadUInt32();
+            	if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            	if ( vehicleUnknown2 ) packet.ReadUInt32();
+                vehiclevector.O = packet.ReadFloat();
+            }
+
+            if (movementValues.IsInterpolated)
+            {
+                float _31 = packet.ReadFloat();
+            	if (movementValues.IsInterpolated2)
+            	{
+                    float _34 = packet.ReadFloat();
+                    float _33 = packet.ReadFloat();
+                    float _35 = packet.ReadFloat();
+                }
+                uint _30 = packet.ReadUInt32();
+            }*/
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+
+            Log.Message(LogType.DEBUG, "Character with Guid: {0}, AccountId: {1} changed walk speed to {2}", guid, session.Account.Id, walkspeed);
+        }
+
+        [Opcode(ClientMessage.ForceFlightSpeedChangeAck, "16357")]
+        public static void HandleForceFlightSpeedChangeAck(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4();
+
+            vector.X = packet.ReadFloat();
+            vector.Z = packet.ReadFloat();
+            float flightspeed = packet.ReadFloat();
+            uint zeroes = packet.ReadUInt32();
+            vector.Y = packet.ReadFloat();
+
+            bool HasPitch = !BitUnpack.GetBit();
+            bool Unknown3 = BitUnpack.GetBit();
+            movementValues.HasRotation = !BitUnpack.GetBit();
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            guidMask[7] = BitUnpack.GetBit();
+
+            bool HasTime = !BitUnpack.GetBit();
+            bool Unknown4 = BitUnpack.GetBit();
+
+            movementValues.IsTransport = BitUnpack.GetBit();
+
+            bool HasSplineElevation = !BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+            movementValues.IsAlive = !BitUnpack.GetBit();
+
+            guidMask[5] = BitUnpack.GetBit();
+            guidMask[4] = BitUnpack.GetBit();
+            guidMask[1] = BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+            bool Unknown = BitUnpack.GetBit();
+
+            guidMask[0] = BitUnpack.GetBit();
+            guidMask[2] = BitUnpack.GetBit();
+            guidMask[3] = BitUnpack.GetBit();
+            guidMask[6] = BitUnpack.GetBit();
+
+            bool Unknown2 = BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+            	vehicleGuidMask[0] = BitUnpack.GetBit();
+            	vehicleGuidMask[2] = BitUnpack.GetBit();
+            	bool vehicleUnknown1 = BitUnpack.GetBit();
+            	vehicleGuidMask[4] = BitUnpack.GetBit();
+            	vehicleGuidMask[7] = BitUnpack.GetBit();
+            	vehicleGuidMask[5] = BitUnpack.GetBit();
+            	vehicleGuidMask[3] = BitUnpack.GetBit();
+            	bool vehicleUnknown2 = BitUnpack.GetBit();
+            	vehicleGuidMask[1] = BitUnpack.GetBit();
+            	vehicleGuidMask[6] = BitUnpack.GetBit();
+            }*/
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            /*if (movementValues.IsInterpolated)
+            		movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+
+            /*if (movementValues.IsInterpolated)
+            {
+            	if ( movementValues.IsInterpolated2 )
+            	{
+                    float _35 = packet.ReadFloat();
+                    float _34 = packet.ReadFloat();
+                    float _33 = packet.ReadFloat();
+            	}
+            	float _31 = packet.ReadFloat();
+            	uint _30 = packet.ReadUInt32();
+            }
+
+            if (movementValues.IsTransport)
+            {
+            	Vector4 vehiclevector = new Vector4();
+            	if ( vehicleUnknown2 ) packet.ReadUInt32();
+            	vehiclevector.X = packet.ReadFloat();
+            	if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            	byte _88 = packet.ReadUInt8();
+            	if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            	vehiclevector.O = packet.ReadFloat();
+            	if ( vehicleUnknown1 ) packet.ReadUInt32();
+            	if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            	uint _23 = packet.ReadUInt32();
+            	if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            	vehiclevector.Z = packet.ReadFloat();
+            	vehiclevector.Y = packet.ReadFloat();
+            	if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            }*/
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+
+            Log.Message(LogType.DEBUG, "Character with Guid: {0}, AccountId: {1} changed flight speed to {2}", guid, session.Account.Id, flightspeed);
+        }
+
+        [Opcode(ClientMessage.ForceSwimSpeedChangeAck, "16357")]
+        public static void HandleForceSwimSpeedChangeAck(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4();
+
+            vector.X = packet.ReadFloat();
+            uint zeroes = packet.ReadUInt32();
+            float swimspeed = packet.ReadFloat();
+            vector.Y = packet.ReadFloat();
+            vector.Z = packet.ReadFloat();
+
+            bool Unknown4 = BitUnpack.GetBit();
+            bool HasSplineElevation = !BitUnpack.GetBit();
+
+            guidMask[4] = BitUnpack.GetBit();
+            guidMask[7] = BitUnpack.GetBit();
+
+            bool Unknown3 = BitUnpack.GetBit();
+            bool Unknown = BitUnpack.GetBit();
+            movementValues.HasRotation = !BitUnpack.GetBit();
+
+            guidMask[1] = BitUnpack.GetBit();
+            guidMask[3] = BitUnpack.GetBit();
+
+            movementValues.IsTransport = BitUnpack.GetBit();
+            movementValues.IsAlive = !BitUnpack.GetBit();
+
+            guidMask[6] = BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+
+            guidMask[5] = BitUnpack.GetBit();
+            guidMask[0] = BitUnpack.GetBit();
+
+            bool Unknown2 = BitUnpack.GetBit();
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+            bool HasPitch = !BitUnpack.GetBit();
+            guidMask[2] = BitUnpack.GetBit();
+            bool HasTime = !BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+            	vehicleGuidMask[2] = BitUnpack.GetBit();
+            	vehicleGuidMask[5] = BitUnpack.GetBit();
+            	bool vehicleUnknown1 = BitUnpack.GetBit();
+            	bool vehicleUnknown2 = BitUnpack.GetBit();
+            	vehicleGuidMask[7] = BitUnpack.GetBit();
+            	vehicleGuidMask[4] = BitUnpack.GetBit();
+            	vehicleGuidMask[6] = BitUnpack.GetBit();
+            	vehicleGuidMask[1] = BitUnpack.GetBit();
+            	vehicleGuidMask[0] = BitUnpack.GetBit();
+            	vehicleGuidMask[3] = BitUnpack.GetBit();
+            }*/
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            /*if (movementValues.IsInterpolated)
+            		movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+
+            /*if (movementValues.IsTransport)
+            {
+                Vector4 vehiclevector = new Vector4();
+                if ( vehicleUnknown1 ) packet.ReadUInt32();
+                vehiclevector.X = packet.ReadFloat();
+                if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+                byte _88 = packet.ReadUInt8();
+                if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+                if ( vehicleUnknown2 ) packet.ReadUInt32();
+                uint _23 = packet.ReadUInt32();
+                if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+                if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Y = packet.ReadFloat();
+                if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Z = packet.ReadFloat();
+                vehiclevector.O = packet.ReadFloat();
+            }
+
+            if (movementValues.IsInterpolated)
+            {
+                if ( movementValues.IsInterpolated2 )
+            	{
+                    float _34 = packet.ReadFloat();
+                    float _35 = packet.ReadFloat();
+                    float _33 = packet.ReadFloat();
+                }
+                uint _30 = packet.ReadUInt32();
+                float _31 = packet.ReadFloat();
+            }*/
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+
+            Log.Message(LogType.DEBUG, "Character with Guid: {0}, AccountId: {1} changed swim speed to {2}", guid, session.Account.Id, swimspeed);
+        }
+
+        [Opcode(ClientMessage.ForceRunSpeedChangeAck, "16357")]
+        public static void HandleForceRunSpeedChangeAck(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4();
+
+            vector.Z = packet.ReadFloat();
+            float runspeed = packet.ReadFloat();
+            uint zeroes = packet.ReadUInt32();
+            vector.Y = packet.ReadFloat();
+            vector.X = packet.ReadFloat();
+
+            movementValues.HasRotation = !BitUnpack.GetBit();
+
+            guidMask[5] = BitUnpack.GetBit();
+            guidMask[7] = BitUnpack.GetBit();
+            guidMask[4] = BitUnpack.GetBit();
+
+            bool Unknown3 = BitUnpack.GetBit();
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+
+            guidMask[0] = BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+
+            guidMask[3] = BitUnpack.GetBit();
+            guidMask[6] = BitUnpack.GetBit();
+
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            bool HasTime = !BitUnpack.GetBit();
+            movementValues.IsAlive = !BitUnpack.GetBit();
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+
+            bool HasSplineElevation = !BitUnpack.GetBit();
+            bool Unknown = BitUnpack.GetBit();
+            movementValues.IsTransport = BitUnpack.GetBit();
+            bool Unknown2 = BitUnpack.GetBit();
+
+            guidMask[2] = BitUnpack.GetBit();
+
+            bool Unknown4 = BitUnpack.GetBit();
+
+            guidMask[1] = BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+            	vehicleGuidMask[7] = BitUnpack.GetBit();
+            	bool vehicleUnknown1 = BitUnpack.GetBit();
+            	vehicleGuidMask[4] = BitUnpack.GetBit();
+            	bool vehicleUnknown2 = BitUnpack.GetBit();
+        	    vehicleGuidMask[5] = BitUnpack.GetBit();
+            	vehicleGuidMask[2] = BitUnpack.GetBit();
+            	vehicleGuidMask[1] = BitUnpack.GetBit();
+            	vehicleGuidMask[6] = BitUnpack.GetBit();
+        	    vehicleGuidMask[3] = BitUnpack.GetBit();
+            	vehicleGuidMask[0] = BitUnpack.GetBit();
+            }*/
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            /*if (movementValues.IsInterpolated)
+        		movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+
+            /*if (movementValues.IsTransport)
+            {
+        	    Vector4 vehiclevector = new Vector4();        	
+            	if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Y = packet.ReadFloat();
+                vehiclevector.O = packet.ReadFloat();
+            	uint _23 = packet.ReadUInt32();
+            	if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.Z = packet.ReadFloat();
+            	if ( vehicleUnknown2 ) packet.ReadUInt32();
+            	if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+        	    if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+                if ( vehicleUnknown1 ) packet.ReadUInt32();
+            	if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            	byte _88 = packet.ReadUInt8();
+            	if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+                vehiclevector.X = packet.ReadFloat();
+            }*/
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            /*if (movementValues.IsInterpolated)
+            {
+                packet.ReadFloat();
+                packet.ReadUInt32();
+            	if (movementValues.IsInterpolated2)
+        	    {
+                    packet.ReadFloat();
+                    packet.ReadFloat();
+                    packet.ReadFloat();
+                }
+            }*/
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+
+            Log.Message(LogType.DEBUG, "Character with Guid: {0}, AccountId: {1} changed run speed to {2}", guid, session.Account.Id, runspeed);
+        }
+
+        [Opcode(ClientMessage.MoveSetCanFlyAck, "16357")]
+        public static void HandleMoveSetCanFlyAck(ref PacketReader packet, ref WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            bool[] guidMask = new bool[8];
+            byte[] guidBytes = new byte[8];
+
+            Vector4 vector = new Vector4();
+
+            vector.Z = packet.ReadFloat();
+            uint zeroes = packet.ReadUInt32();
+            vector.X = packet.ReadFloat();
+            vector.Y = packet.ReadFloat();
+
+            bool Unknown2 = BitUnpack.GetBit();
+            uint counter = BitUnpack.GetBits<uint>(24);
+
+            guidMask[5] = BitUnpack.GetBit();
+            guidMask[6] = BitUnpack.GetBit();
+
+            bool HasTime = !BitUnpack.GetBit();
+
+            guidMask[1] = BitUnpack.GetBit();
+            guidMask[3] = BitUnpack.GetBit();
+
+            bool HasSplineElevation = !BitUnpack.GetBit();
+            bool HasPitch = !BitUnpack.GetBit();
+
+            guidMask[4] = BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+            movementValues.IsTransport = BitUnpack.GetBit();
+
+            bool Unknown3 = BitUnpack.GetBit();
+            bool Unknown = BitUnpack.GetBit();
+
+            movementValues.HasRotation = !BitUnpack.GetBit();
+
+            bool Unknown4 = BitUnpack.GetBit();
+
+            guidMask[2] = BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+            movementValues.IsAlive = !BitUnpack.GetBit();
+
+            guidMask[7] = BitUnpack.GetBit();
+            guidMask[0] = BitUnpack.GetBit();
+
+            /*if (movementValues.IsTransport)
+            {
+            	vehicleGuidMask[4] = BitUnpack.GetBit();
+            	vehicleGuidMask[6] = BitUnpack.GetBit();
+            	bool vehicleUnknown2 = BitUnpack.GetBit();
+            	vehicleGuidMask[7] = BitUnpack.GetBit();
+            	vehicleGuidMask[5] = BitUnpack.GetBit();
+            	vehicleGuidMask[1] = BitUnpack.GetBit();
+            	vehicleGuidMask[3] = BitUnpack.GetBit();
+            	bool vehicleUnknown1 = BitUnpack.GetBit();
+            	vehicleGuidMask[2] = BitUnpack.GetBit();
+            	vehicleGuidMask[0] = BitUnpack.GetBit();
+            }
+
+            if (movementValues.IsInterpolated)
+                movementValues.IsInterpolated2 = BitUnpack.GetBit();*/
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+
+            for (int i = 0; i < counter; i++)
+                packet.ReadUInt32();
+
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+
+            /*if (movementValues.IsTransport)
+            {
+            	Vector4 vehiclevector = new Vector4();
+            	if ( vehicleUnknown2 ) packet.ReadUInt32();
+            	uint _23 = packet.ReadUInt32();
+            	if (vehicleGuidMask[2]) vehicleGuidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            	vehiclevector.Z = packet.ReadFloat();
+            	if (vehicleGuidMask[6]) vehicleGuidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[4]) vehicleGuidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            	byte _88 = packet.ReadUInt8(); 					  																			 // (BYTE)DATA[88]
+            	if (vehicleGuidMask[0]) vehicleGuidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[7]) vehicleGuidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[5]) vehicleGuidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            	if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            	if ( vehicleUnknown1 ) packet.ReadUInt32();
+            	vehiclevector.Y = packet.ReadFloat();
+            	if (vehicleGuidMask[3]) vehicleGuidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            	vehiclevector.O = packet.ReadFloat();
+            	vehiclevector.X = packet.ReadFloat();
+            }
+
+            if (movementValues.IsInterpolated)
+            {
+            	if (movementValues.IsInterpolated2)
+            	{
+                    float _34 = packet.ReadFloat();
+                    float _35 = packet.ReadFloat();
+                    float _33 = packet.ReadFloat();
+            	}
+            	uint _30 = packet.ReadUInt32();
+            	float _31 = packet.ReadFloat();
+            }*/
+
+            if (movementValues.HasRotation)
+                vector.O = packet.ReadFloat();
+
+            if (HasTime)
+                movementValues.Time = packet.ReadUInt32();
+
+            if (HasPitch)
+                packet.ReadFloat();
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
+
+            if (movementValues.IsAlive)
+                movementValues.Time = packet.ReadUInt32();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+
+            Log.Message(LogType.DEBUG, "Character with Guid: {0}, AccountId: {1} set FLY to {2}", guid, session.Account.Id, ((movementValues.HasMovementFlags) ? "ON" : "OFF"));
         }
     }
 }
