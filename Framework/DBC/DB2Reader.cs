@@ -31,11 +31,6 @@ namespace Framework.DBC
             Dictionary<uint, T> dict = new Dictionary<uint, T>();
             
             string path = WorldConfig.DataPath + "/dbc/" + FileName;
-            if (!File.Exists(path))
-            {
-                Logging.Log.Message(Logging.LogType.ERROR, "DBC File {0} not found", FileName);
-                return null;
-            }
             try
             {
                 using (BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read), Encoding.UTF8))
@@ -78,7 +73,7 @@ namespace Framework.DBC
                         if (MaxId != 0)
                         {
                             int diff = MaxId - MinId + 1;   // blizzard is weird people...
-                            reader.Read(index, 0, diff * 4);     // an index for rows
+                            reader.ReadBytes(diff * 4);     // an index for rows
                             reader.ReadBytes(diff * 2);     // a memory allocation bank
                         }
                     }

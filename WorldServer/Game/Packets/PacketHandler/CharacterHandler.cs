@@ -16,6 +16,7 @@
  */
 
 using Framework.Constants;
+using Framework.Constants.ItemSettings;
 using Framework.Database;
 using Framework.DBC;
 using Framework.Logging;
@@ -24,7 +25,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using WorldServer.Game.Managers;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
@@ -148,7 +148,7 @@ namespace WorldServer.Game.PacketHandler
             {
                 BitPack.Write(1);
                 BitPack.Flush();
-            };
+            }
 
             session.Send(ref enumCharacters);
         }
@@ -262,7 +262,12 @@ namespace WorldServer.Game.PacketHandler
 
             session.Character = new Character(guid);
 
-            WorldMgr.AddSession(guid, ref session);
+            if (!WorldMgr.AddSession(guid, ref session))
+            {
+                Log.Message(LogType.ERROR, "A Character with Guid: {0} is already logged in", guid);
+                return;
+            }
+
             WorldMgr.WriteAccountData(AccountDataMasks.CharacterCacheMask, ref session);
 
             MiscHandler.HandleMessageOfTheDay(ref session);
@@ -272,6 +277,22 @@ namespace WorldServer.Game.PacketHandler
                 CinematicHandler.HandleStartCinematic(ref session);
 
             ObjectHandler.HandleUpdateObjectCreate(ref session);
+        }
+
+        public static void HandleEquipError(ref WorldClass session, InventoryResult msg)
+        {
+            PacketWriter inventoryFail = new PacketWriter(JAMCMessage.InventoryChangeFailure);
+
+            inventoryFail.WriteUInt8((byte)msg);
+
+            if (msg != InventoryResult.EQUIP_ERR_OK)
+            {
+                inventoryFail.WriteUInt64(0);       // used for item1 guid
+                inventoryFail.WriteUInt64(0);       // used for item2 guid
+                inventoryFail.WriteUInt8(0);        // bag type subclass, used with EQUIP_ERR_EVENT_AUTOEQUIP_BIND_CONFIRM and EQUIP_ERR_ITEM_DOESNT_GO_INTO_BAG2
+            }
+
+            session.Send(ref inventoryFail);
         }
     }
 }

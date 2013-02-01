@@ -16,10 +16,8 @@
  */
 
 using Framework.Console;
-using WorldServer.Game.Managers;
 using WorldServer.Game.Packets.PacketHandler;
 using Framework.ObjectDefines;
-using WorldServer.Game.PacketHandler;
 using Framework.Database;
 using System;
 using WorldServer.Network;
@@ -202,45 +200,37 @@ namespace WorldServer.Game.Chat.Commands
         }
 
         [ChatCommand("appear", "Usage: !appear #playerName (Teleports yourself to Players position)")]
-        public static void Appear(string[] args, ref WorldClass srcSeassion)
+        public static void Appear(string[] args, ref WorldClass session)
         {
-            if (args.Length == 1)
-            {
-                ChatHandler.SendMessageByType(ref srcSeassion, 0, 0, "Usage: !appear #playerName (Teleports yourself to Players position)");
-                return;
-            }
-            var srcChar = srcSeassion.Character;
-            var dstName = CommandParser.Read<string>(args, 1);
+            var pChar = session.Character;
+            var appearName = CommandParser.Read<string>(args, 1);
 
-            var appearSession = WorldMgr.GetSession(dstName);
+            var appearSession = WorldMgr.GetSession(appearName);
             if (appearSession != null)
-                srcChar.TeleportTo(appearSession.Character.Position, appearSession.Character.Map);
+                pChar.TeleportTo(appearSession.Character.Position, appearSession.Character.Map);
             else
-                ChatHandler.SendMessageByType(ref srcSeassion, 0, 0, String.Format("Appear failed. Player {0} not found.", dstName));
+                ChatHandler.SendMessageByType(ref session, 0, 0, String.Format("Appear failed. Player {0} not found.", appearName));
         }
 
         [ChatCommand("summon", "Usage: !summon #playerName (Teleports the Player to your current position)")]
-        public static void Summon(string[] args, ref WorldClass dstSeassion)
+        public static void Summon(string[] args, ref WorldClass session)
         {
-            if (args.Length == 1)
-            {
-                ChatHandler.SendMessageByType(ref  dstSeassion, 0, 0, "Usage: !appear #playerName (Teleports yourself to Players position)");
-            }
-            string srcName = CommandParser.Read<string>(args, 1);
-            WorldClass srcSeassion = Managers.WorldManager.GetInstance().GetSession(srcName);
-            var dstChar = dstSeassion.Character;
-            if (srcSeassion != null)
-                srcSeassion.Character.TeleportTo(dstSeassion.Character.Position, dstSeassion.Character.Map);
+            var pChar = session.Character;
+            var summonName = CommandParser.Read<string>(args, 1);
+
+            var summonSession = WorldMgr.GetSession(summonName);
+            if (summonSession != null)
+                summonSession.Character.TeleportTo(pChar.Position, pChar.Map);
             else
             {
-                SQLResult result = DB.Characters.Select("SELECT guid FROM characters WHERE name = ?", srcName);
+                SQLResult result = DB.Characters.Select("SELECT guid FROM characters WHERE name = ?", summonName);
                 if (result.Count > 0)
                 {
-                    DB.Characters.Execute("UPDATE characters SET x = ?, y = ?, z = ?, o = ?, map = ? WHERE guid = ?", dstChar.Position.X, dstChar.Position.Y, dstChar.Position.Z, dstChar.Position.O, dstChar.Map, result.Read<uint>(0, "guid"));
-                    ChatHandler.SendMessageByType(ref dstSeassion, 0, 0, String.Format("Offline Summon for {0} Success!", srcName));
+                    DB.Characters.Execute("UPDATE characters SET x = ?, y = ?, z = ?, o = ?, map = ? WHERE guid = ?", pChar.Position.X, pChar.Position.Y, pChar.Position.Z, pChar.Position.O, pChar.Map, result.Read<uint>(0, "guid"));
+                    ChatHandler.SendMessageByType(ref session, 0, 0, String.Format("Offline Summon for {0} Success!", summonName));
                 }
                 else
-                    ChatHandler.SendMessageByType(ref dstSeassion, 0, 0, String.Format("Summon failed. Player {0} not found!", srcName));
+                    ChatHandler.SendMessageByType(ref session, 0, 0, String.Format("Summon failed. Player {0} not found!", summonName));
             }
         }
 

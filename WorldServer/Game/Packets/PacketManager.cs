@@ -19,10 +19,10 @@ using Framework.Constants;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using WorldServer.Game.Managers;
+using Framework.Network.Packets;
 using WorldServer.Network;
 
-namespace Framework.Network.Packets
+namespace WorldServer.Game.Packets
 {
     public class PacketManager : Globals
     {
@@ -49,10 +49,9 @@ namespace Framework.Network.Packets
             if (session.Character != null)
             {
                 ulong charGuid = session.Character.Guid;
+
                 if (WorldMgr.Sessions.ContainsKey(charGuid))
                     WorldMgr.Sessions[charGuid] = session;
-                else
-                    WorldMgr.AddSession(charGuid, ref session);
             }
 
             if (OpcodeHandlers.ContainsKey(opcode))

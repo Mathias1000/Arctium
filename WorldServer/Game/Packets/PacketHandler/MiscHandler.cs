@@ -16,10 +16,10 @@
  */
 
 using Framework.Constants;
+using Framework.DBC;
 using Framework.Logging;
 using Framework.Network.Packets;
 using WorldServer.Network;
-using WorldServer.Game.Managers;
 using Framework.Database;
 using Framework.ObjectDefines;
 
@@ -89,7 +89,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         {
             byte violenceLevel = packet.ReadUInt8();
 
-            Log.Message(LogType.DEBUG, "Violence level from account '{0} (Id: {1})' is {2}.", session.Account.Name, session.Account.Id, violenceLevel);
+            Log.Message(LogType.DEBUG, "Violence level from account '{0} (Id: {1})' is {2}.", session.Account.Name, session.Account.Id, (ViolenceLevel)violenceLevel);
         }
 
         [Opcode(ClientMessage.ActivePlayer, "16357")]
@@ -128,6 +128,24 @@ namespace WorldServer.Game.Packets.PacketHandler
                 Log.Message(LogType.DEBUG, "Character (Guid: {0}) removed current selection.", session.Character.Guid);
             else
                 Log.Message(LogType.DEBUG, "Character (Guid: {0}) selected a {1} (Guid: {2}, Id: {3}).", session.Character.Guid, ObjectGuid.GetGuidType(fullGuid), guid, ObjectGuid.GetId(fullGuid));
+        }
+
+        [Opcode(ClientMessage.Areatrigger, "16357")]
+        public static void HandleAreatrigger(ref PacketReader packet, ref WorldClass session)
+        {
+            var pChar = session.Character;
+            uint triggerId = packet.ReadUInt32();
+
+            AreaTrigger areaTrigger = DBCStorage.AreaTriggerStorage[triggerId];
+
+            Log.Message(LogType.DEBUG, "Character (Guid: {0}) reached Areatrigger Id: {1}.", pChar.Guid, areaTrigger.Id);
+        }
+
+        [Opcode(ClientMessage.SetActionbarToggles, "16357")]
+        public static void HandleActionbarToggles(ref PacketReader packet, ref WorldClass session)
+        {
+            byte actionBar = packet.ReadUInt8();
+            Log.Message(LogType.DEBUG, "HandleActionbarToggles - Character (Guid: {0}) send Actionbar Slot: {1}.", session.Character.Guid, actionBar);
         }
     }
 }

@@ -31,11 +31,6 @@ namespace Framework.DBC
             try
             {
                 string path = WorldConfig.DataPath + "/dbc/" + FileName;
-                if (!File.Exists(path))
-                {
-                    Logging.Log.Message(Logging.LogType.ERROR, "DBC File {0} not found", FileName);
-                    return null;
-                }
                 using (BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read), Encoding.UTF8))
                 {
                     // read dbc header

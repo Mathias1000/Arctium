@@ -17,9 +17,7 @@
 
 using Framework.Constants;
 using Framework.Network.Packets;
-using WorldServer.Game.Managers;
 using WorldServer.Network;
-using WorldServer.Game.PacketHandler;
 
 namespace WorldServer.Game.Packets.PacketHandler
 {
@@ -41,7 +39,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             objectDestroy.WriteUInt64(pChar.Guid);
             objectDestroy.WriteUInt8(0);
 
-            WorldMgr.SendToAllInMap(pChar.Guid, objectDestroy);
+            WorldMgr.SendToInRangeCharacter(pChar, objectDestroy);
             WorldMgr.DeleteSession(pChar.Guid);
         }
     }

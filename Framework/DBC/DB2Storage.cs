@@ -24,5 +24,10 @@ namespace Framework.DBC
         internal static int DB2FileCount = 0;
 
         public static Dictionary<uint, ItemEntry> ItemEntryStorage;
+        public static Dictionary<uint, ItemSparse> ItemSparseStorage;
+        public static Dictionary<uint, ItemExtendedCost> ItemExtendedCostStorage;
+
+        //Strings
+        internal static Dictionary<uint, string> ItemSparseStrings = new Dictionary<uint, string>();
     }
 }

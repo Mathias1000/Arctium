@@ -60,6 +60,7 @@
     <Compile Include="Game\Globals.cs" />
     <Compile Include="Game\Managers\AddonManager.cs" />
     <Compile Include="Game\Managers\DataManager.cs" />
+    <Compile Include="Game\Managers\ItemManager.cs" />
     <Compile Include="Game\Managers\ObjectManager.cs" />
     <Compile Include="Game\Managers\SkillManager.cs" />
     <Compile Include="Game\Managers\SpawnManager.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Game\ObjectDefines\CreatureData.cs" />
     <Compile Include="Game\ObjectDefines\CreatureStats.cs" />
     <Compile Include="Game\ObjectDefines\GameObjectStats.cs" />
+    <Compile Include="Game\ObjectDefines\ItemData.cs" />
     <Compile Include="Game\Packets\PacketHandler\AuthenticationHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\CacheHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\CharacterHandler.cs" />
@@ -86,6 +88,7 @@
     <Compile Include="Game\WorldEntities\Character.cs" />
     <Compile Include="Game\WorldEntities\Creature.cs" />
     <Compile Include="Game\WorldEntities\GameObject.cs" />
+    <Compile Include="Game\WorldEntities\Item.cs" />
     <Compile Include="Game\WorldEntities\Skill.cs" />
     <Compile Include="Game\WorldEntities\Spell.cs" />
     <Compile Include="Game\WorldEntities\WorldObject.cs" />

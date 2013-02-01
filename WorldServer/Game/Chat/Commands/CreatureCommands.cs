@@ -16,8 +16,6 @@
  */
 
 using Framework.Console;
-using WorldServer.Game.Managers;
-using WorldServer.Game.PacketHandler;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Game.Spawns;
 using WorldServer.Game.WorldEntities;
@@ -66,7 +64,7 @@ namespace WorldServer.Game.Chat.Commands
             {
                 SpawnMgr.RemoveSpawn(spawn);
 
-                WorldMgr.SendToAllInMap(pChar.Guid, ObjectHandler.HandleObjectDestroy(ref session, pChar.TargetGuid));
+                WorldMgr.SendToInRangeCharacter(pChar, ObjectHandler.HandleObjectDestroy(ref session, pChar.TargetGuid));
                 ChatHandler.SendMessageByType(ref session, 0, 0, "Selected Spawn successfully removed.");
             }
             else

@@ -23,7 +23,6 @@ using Framework.ObjectDefines;
 using Framework.Constants;
 using Framework.Database;
 using Framework.DBC;
-using WorldServer.Game.Managers;
 using WorldServer.Game.PacketHandler;
 using WorldServer.Game.Packets.PacketHandler;
 
@@ -92,10 +91,10 @@ namespace WorldServer.Game.WorldEntities
             Globals.SpellMgr.LoadSpells(this);
             Globals.SkillMgr.LoadSkills(this);
 
-            SetCharacterFields();
+            SetUpdateFields();
         }
 
-        public void SetCharacterFields()
+        public override void SetUpdateFields()
         {
             // ObjectFields
             SetUpdateField<UInt64>((int)ObjectFields.Guid, Guid);

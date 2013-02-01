@@ -32,6 +32,7 @@ CREATE TABLE `characters` (
   `hairColor` tinyint(4) NOT NULL DEFAULT '0',
   `facialHair` tinyint(4) NOT NULL DEFAULT '0',
   `level` tinyint(4) NOT NULL DEFAULT '1',
+  `money` bigint(20) NOT NULL DEFAULT '0',
   `zone` int(11) NOT NULL DEFAULT '0',
   `map` int(11) NOT NULL DEFAULT '0',
   `x` float NOT NULL DEFAULT '0',

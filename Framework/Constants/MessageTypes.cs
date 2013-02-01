@@ -35,7 +35,7 @@ namespace Framework.Constants
         ChatMessageMonsterParty        = 0x0D,
         ChatMessageMonsterYell         = 0x0E,
         ChatMessageMonsterWhisper      = 0x0F,
-        ChatMessageMonsteeEmote        = 0x10,
+        ChatMessageMonsterEmote        = 0x10,
         ChatMessageChannel             = 0x11,
         ChatMessageChannelJoin         = 0x12,
         ChatMessageChannelLeave        = 0x13,

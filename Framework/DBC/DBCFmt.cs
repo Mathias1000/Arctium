@@ -19,9 +19,36 @@ namespace Framework.DBC
 {
     public static class DBCFmt
     {
+        public static string AreaGroupEntryfmt = "niiiiiii";
+        public static string AreaPOIEntryfmt = "niiiiiiiiiiiffixiixixxx";
+        public static string AreaTableEntryfmt = "niiiixiiiixiisiiiiiffxxxxxxxxx";
+        public static string AreaTriggerfmt = "nifffxxxfffffxxx";
         public static string ChrClassesEntryfmt = "nixsxxxixiixxxxxxx";
         public static string ChrRacesEntryfmt = "nxixiixixxxxixsxxxxxxxxxxxxxxxxxxxxx";
+        public static string ChrPowerTypesfmt = "nii";
         public static string CharStartOutfitfmt = "xiiiiiiiiiiiiiiiiiiiiiiiiixxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+        public static string ChatChannelsEntryfmt = "nixsx";
+        public static string ItemClassEntryfmt = "nxfx";
+        public static string ItemPriceBaseEntryfmt = "ixff";
+        public static string ItemSetEntryfmt = "nsiiiiiiiiiixxxxxxxiiiiiiiiiiiiiiiiii";
+        public static string FactionEntryfmt = "niiiiiiiiiiiiiiiiiiffixsxx";
+        public static string FactionTemplateEntryfmt = "niiiiiiiiiiiii";
+        public static string GameObjectDisplayInfofmt = "nsxxxxxxxxxxffffffixx";
+        public static string GlyphPropertiesfmt = "niii";
+        public static string GlyphSlotEntryfmt = "nii";
+        public static string LiquidTypefmt = "nxxixixxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+        public static string MapEntryfmt = "nxiixsixxixiffxixii";
+        public static string MountCapabilityfmt = "niiiiiii";
         public static string NameGenfmt = "nsii";
+        public static string TalentEntryfmt = "nxiiixxxiix";
+        public static string TaxiNodesfmt = "nifffsiixxx";
+        public static string TaxiPathEntryfmt = "niii";
+        public static string TaxiPathNodeEntryfmt = "niiifffiiii";
+        public static string WMOAreaTablefmt = "niiixxxxxiixxxx";
+        public static string WorldMapAreafmt = "niisffffixxxxx";
+        public static string WorldSafeLocsfmt = "nifffxs";
+        public static string gtOCTBaseHPByClassfmt = "nf";
+        public static string gtOCTBaseMPByClassfmt = "nf";
+        public static string gtOCTHpPerStaminafmt = "nf";
     }
 }

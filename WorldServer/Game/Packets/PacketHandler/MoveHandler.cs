@@ -16,14 +16,12 @@
  */
 
 using Framework.Constants;
+using Framework.Constants.Movement;
 using Framework.Network.Packets;
-using WorldServer.Network;
-using System.Windows;
 using Framework.ObjectDefines;
-using WorldServer.Game.PacketHandler;
-using WorldServer.Game.Managers;
 using System;
 using WorldServer.Game.WorldEntities;
+using WorldServer.Network;
 
 namespace WorldServer.Game.Packets.PacketHandler
 {
@@ -875,6 +873,8 @@ namespace WorldServer.Game.Packets.PacketHandler
                 moveUpdate.WriteFloat(0);
             }
 
+            BitPack.WriteGuidBytes(2);
+
             if (movementValues.IsAlive)
                 moveUpdate.WriteUInt32(movementValues.Time);
 
@@ -882,7 +882,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             moveUpdate.WriteFloat(vector.Z);
 
-            BitPack.WriteGuidBytes(4, 3, 2, 6, 0);
+            BitPack.WriteGuidBytes(4, 3, 1, 6, 0);
 
             moveUpdate.WriteFloat(vector.X);
 
@@ -894,10 +894,10 @@ namespace WorldServer.Game.Packets.PacketHandler
             var session = WorldMgr.GetSession(guid);
             if (session != null)
             {
-                Character pChar = WorldMgr.GetSession(guid).Character;
-                ObjectMgr.SetPosition(ref pChar, vector, false);
+                Character pChar = session.Character;
 
-                WorldMgr.SendToAllOtherInZone(guid, moveUpdate);
+                ObjectMgr.SetPosition(ref pChar, vector, false);
+                WorldMgr.SendToInRangeCharacter(pChar, moveUpdate);
             }
         }
 

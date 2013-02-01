@@ -15,8 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Text;
-using WorldServer.Game.Managers;
+using Framework.Console;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Network;
 
@@ -50,6 +51,16 @@ namespace WorldServer.Game.Chat.Commands
             ObjectMgr.SavePositionToDB(session.Character);
 
             ChatHandler.SendMessageByType(ref session, 0, 0, "Your character is successfully saved to the database!");
+        }
+
+        [ChatCommand("money", "Usage: !money #copper (Adds the copper value to your character.)")]
+        public static void Money(string[] args, ref WorldClass session)
+        {
+            UInt64 moneyValue = CommandParser.Read<UInt64>(args, 1);
+            // Temp disabled
+            //session.Character.ModifyMoney(moneyValue);
+
+            ChatHandler.SendMessageByType(ref session, 0, 0, string.Format("You added {0} copper to your character.", moneyValue));
         }
     }
 }

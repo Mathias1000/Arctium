@@ -21,7 +21,6 @@ using Framework.Logging;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
 using System;
-using WorldServer.Game.Managers;
 using WorldServer.Game.WorldEntities;
 
 namespace WorldServer.Game.Spawns
@@ -70,10 +69,9 @@ namespace WorldServer.Game.Spawns
         {
             CreateFullGuid();
             CreateData(GameObject);
+            SetUpdateFields();
 
             Globals.SpawnMgr.AddSpawn(this, ref GameObject);
-
-            SetGameObjectFields();
 
             WorldObject obj = this;
             UpdateFlag updateFlags = UpdateFlag.Rotation | UpdateFlag.StationaryPosition;
@@ -88,21 +86,15 @@ namespace WorldServer.Game.Spawns
 
                     updateObject.WriteUInt16((ushort)Map);
                     updateObject.WriteUInt32(1);
-                    updateObject.WriteUInt8(1);
-                    updateObject.WriteGuid(Guid);
-                    updateObject.WriteUInt8(5);
 
-                    Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref obj, updateFlags);
-
-                    WriteUpdateFields(ref updateObject);
-                    WriteDynamicUpdateFields(ref updateObject);
+                    WorldMgr.WriteCreateObject(ref updateObject, obj, updateFlags, ObjectType.GameObject);
 
                     v.Value.Send(ref updateObject);
                 }
             }
         }
 
-        public void SetGameObjectFields()
+        public override void SetUpdateFields()
         {
             // ObjectFields
             SetUpdateField<UInt64>((int)ObjectFields.Guid, Guid);

@@ -432,6 +432,7 @@ namespace Framework.Constants
         SendSpellCharges                         = 0xE30,
         SendUnlearnSpells                        = 0xDF5,
         RefreshComponent                         = 0xDB9,
+        InventoryChangeFailure                   = 0x529,
     }
 
     [Flags]
@@ -508,7 +509,13 @@ namespace Framework.Constants
         RealmCache                               = 0xA4D,
         ZoneUpdate                               = 0x88D,
         SetSelection                             = 0x17E,
+        SetActionbarToggles                      = 0x4B,
+        Areatrigger                              = 0x647,
         ObjectUpdateFailed                       = 0x2FB,
+        GossipHello                              = 0x764, // unhandled
+        Inspect                                  = 0x5A3, // unhandled
+        CastSpell                                = 0x14C, // unhandled
+        JoinChannel                              = 0x3E7, // unhandled
         #endregion
 
         #region ChatMessages
@@ -524,6 +531,12 @@ namespace Framework.Constants
         MoveStartTurnLeft                        = 0x46E,
         MoveStartTurnRight                       = 0x9F7,
         MoveStopTurn                             = 0x4CB,
+        MoveStartStrafeLeft                      = 0x25E, // unhandled
+        MoveStartStrafeRight                     = 0x1FB, // unhandled
+        MoveStopStrafe                           = 0xADE, // unhandled
+        MoveJump                                 = 0x44B, // unhandled
+        MoveFallLand                             = 0x78B, // unhandled
+        MoveTurnMouse                            = 0x46F, // unhandled
         #endregion
     }
 

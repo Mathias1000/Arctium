@@ -71,6 +71,7 @@ namespace RealmServer
             else
             {
                 Log.Message(LogType.ERROR, "RealmServer couldn't be started: ");
+                Console.ReadKey();
             }
 
             // Free memory...

@@ -20,5 +20,7 @@ namespace Framework.DBC
     public class DB2Fmt
     {
         public static string Itemfmt = "niiiiiii";
+        public static string ItemExtendedCostfmt = "nxxiiiiiiiiiiiiiiiiiiiiiiixxxxx";
+        public static string ItemSparsefmt = "niiixxxiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiifiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiisxxxsiiiiiiiiiiiiiiiiiiiiiifiiifii";
     }
 }
