@@ -22,6 +22,7 @@ using Framework.ObjectDefines;
 using System;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
+using Framework.Logging;
 
 namespace WorldServer.Game.Packets.PacketHandler
 {
