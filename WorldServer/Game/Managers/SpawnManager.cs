@@ -24,11 +24,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using WorldServer.Game.Spawns;
 using WorldServer.Game.WorldEntities;
+using System.Collections.Concurrent;
 
 namespace WorldServer.Game.Managers
 {
     public sealed class SpawnManager : SingletonBase<SpawnManager>
     {
+<<<<<<< HEAD
         public ConcurrentDictionary<ulong, CreatureSpawn> CreatureSpawns;
         public ConcurrentDictionary<ulong, GameObjectSpawn> GameObjectSpawns;
 
@@ -36,6 +38,15 @@ namespace WorldServer.Game.Managers
         {
             CreatureSpawns = new ConcurrentDictionary<ulong, CreatureSpawn>();
             GameObjectSpawns = new ConcurrentDictionary<ulong, GameObjectSpawn>();
+=======
+        public ConcurrentDictionary<CreatureSpawn, Creature> CreatureSpawns;
+        public ConcurrentDictionary<GameObjectSpawn, GameObject> GameObjectSpawns;
+
+        SpawnManager()
+        {
+            CreatureSpawns = new ConcurrentDictionary<CreatureSpawn, Creature>();
+            GameObjectSpawns = new ConcurrentDictionary<GameObjectSpawn, GameObject>();
+>>>>>>> 7d3525d847b762c4ba307be028d1559bd4a8b05d
 
             Initialize();
         }
@@ -46,15 +57,26 @@ namespace WorldServer.Game.Managers
             LoadGameObjectSpawns();
         }
 
+<<<<<<< HEAD
         public bool AddSpawn(CreatureSpawn spawn)
         {
             return CreatureSpawns.TryAdd(spawn.Guid, spawn);
+=======
+        public bool AddSpawn(CreatureSpawn spawn, ref Creature data)
+        {
+            return CreatureSpawns.TryAdd(spawn, data);
+>>>>>>> 7d3525d847b762c4ba307be028d1559bd4a8b05d
         }
 
         public void RemoveSpawn(CreatureSpawn spawn)
         {
+<<<<<<< HEAD
             CreatureSpawn removedSpawn;
             CreatureSpawns.TryRemove(spawn.Guid, out removedSpawn);
+=======
+            Creature removedSpawn;
+            CreatureSpawns.TryRemove(spawn, out removedSpawn);
+>>>>>>> 7d3525d847b762c4ba307be028d1559bd4a8b05d
 
             DB.World.Execute("DELETE FROM creature_spawns WHERE Guid = ?", ObjectGuid.GetGuid(spawn.Guid));
         }
@@ -141,13 +163,25 @@ namespace WorldServer.Game.Managers
 
         public bool AddSpawn(GameObjectSpawn spawn, ref GameObject data)
         {
+<<<<<<< HEAD
             return GameObjectSpawns.TryAdd(spawn.Guid, spawn);
+=======
+            return GameObjectSpawns.TryAdd(spawn, data);
+>>>>>>> 7d3525d847b762c4ba307be028d1559bd4a8b05d
         }
 
         public void RemoveSpawn(GameObjectSpawn spawn)
         {
+<<<<<<< HEAD
             GameObjectSpawn removedGameObject;
             GameObjectSpawns.TryRemove(spawn.Guid, out removedGameObject);
+=======
+            GameObject removedGameObject;
+            GameObjectSpawns.TryRemove(spawn, out removedGameObject);
+
+            DB.World.Execute("DELETE FROM creature_spawns WHERE Guid = ?", ObjectGuid.GetGuid(spawn.Guid));
+        }
+>>>>>>> 7d3525d847b762c4ba307be028d1559bd4a8b05d
 
             DB.World.Execute("DELETE FROM creature_spawns WHERE Guid = ?", ObjectGuid.GetGuid(spawn.Guid));
         }

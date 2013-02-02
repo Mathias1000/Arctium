@@ -537,6 +537,7 @@ namespace Framework.Constants
         MoveStartTurnLeft                        = 0x46E,
         MoveStartTurnRight                       = 0x9F7,
         MoveStopTurn                             = 0x4CB,
+<<<<<<< HEAD
         MoveStartStrafeLeft                      = 0x25E, // unhandled
         MoveStartStrafeRight                     = 0x1FB, // unhandled
         MoveStopStrafe                           = 0xADE, // unhandled
@@ -553,6 +554,25 @@ namespace Framework.Constants
         #region Specialization
         SetSpecialization                        = 0x2FF,
         LearnTalents                             = 0x136,
+=======
+        MoveTurnWithMouse                        = 0x46F,
+        MovePitchWithMouse                       = 0x1D3,
+        MoveStartStrafeLeft                      = 0x25E,
+        MoveStartStrafeRight                     = 0x1FB,
+        MoveStopStrafe                           = 0xADE,
+        MoveStartFlyingUp                        = 0x83A,
+        MoveStartFlyingDown                      = 0xB1B,
+        MoveStopFlying                           = 0xB9B,
+        MoveJump                                 = 0x44B,
+        MoveFallLand                             = 0xAFF,
+        MoveFallStop                             = 0x78B,
+        MoveCollisionAtJump                      = 0x09F,
+        MoveSetCanFlyAck                         = 0x07E,
+        ForceRunSpeedChangeAck                   = 0x336,
+        ForceFlightSpeedChangeAck                = 0x6C7,
+        ForceWalkSpeedChangeAck                  = 0x93F,
+        ForceSwimSpeedChangeAck                  = 0x1B6,
+>>>>>>> 7d3525d847b762c4ba307be028d1559bd4a8b05d
         #endregion
     }
 

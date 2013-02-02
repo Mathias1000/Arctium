@@ -26,6 +26,7 @@ using System.Linq;
 using System.Threading;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
+using System.Collections.Concurrent;
 
 namespace WorldServer.Game.Managers
 {
@@ -43,6 +44,40 @@ namespace WorldServer.Game.Managers
             StartRangeUpdateTimers();
         }
 
+<<<<<<< HEAD
+=======
+        public bool AddSession(ulong guid, ref WorldClass session)
+        {
+            return Sessions.TryAdd(guid, session);
+        }
+
+        public WorldClass DeleteSession(ulong guid)
+        {
+            WorldClass removedSession;
+            Sessions.TryRemove(guid, out removedSession);
+
+            return removedSession;
+        }
+
+        public WorldClass GetSession(string name)
+        {
+            foreach (var s in Sessions)
+                if (s.Value.Character.Name == name)
+                    return s.Value;
+
+            return null;
+        }
+
+        public WorldClass GetSession(ulong guid)
+        {
+            foreach (var s in Sessions)
+                if (s.Value.Character.Guid == guid)
+                    return s.Value;
+
+            return null;
+        }
+
+>>>>>>> 7d3525d847b762c4ba307be028d1559bd4a8b05d
         public void StartRangeUpdateTimers()
         {
             var updateTask = new Thread(UpdateTask);
