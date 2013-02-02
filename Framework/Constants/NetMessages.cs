@@ -457,8 +457,12 @@ namespace Framework.Constants
         MessageChat                              = 0x009,
         CreatureStats                            = 0xAA4,
         GameObjectStats                          = 0x80D,
+        NPCText                                  = 0x544,
         NameCache                                = 0x30D,
         RealmCache                               = 0xD81,
+        GossipMessage                            = 0x88C,
+        TalentUpdate                             = 0xBAC,
+        SendNewTimeSpeed                         = 0xE68,
     }
 
     [Flags]
@@ -505,6 +509,7 @@ namespace Framework.Constants
         ActivePlayer                             = 0xF84,
         CreatureStats                            = 0x285,
         GameObjectStats                          = 0xBE9,
+        NPCText                                  = 0x2E5,
         NameCache                                = 0x1EC,
         RealmCache                               = 0xA4D,
         ZoneUpdate                               = 0x88D,
@@ -512,9 +517,9 @@ namespace Framework.Constants
         SetActionbarToggles                      = 0x4B,
         Areatrigger                              = 0x647,
         ObjectUpdateFailed                       = 0x2FB,
-        GossipHello                              = 0x764, // unhandled
-        Inspect                                  = 0x5A3, // unhandled
-        CastSpell                                = 0x14C, // unhandled
+        DBQueryBulk                              = 0x537,
+        SetActionButton                          = 0x4B,
+        SetActionBarToggles                      = 0x1C0,
         JoinChannel                              = 0x3E7, // unhandled
         #endregion
 
@@ -523,6 +528,7 @@ namespace Framework.Constants
         ChatMessageYell                          = 0xF7F,
         ChatMessageWhisper                       = 0x306,
         #endregion
+
         #region PlayerMovement
         MoveStartForward                         = 0x0FE,
         MoveStartBackward                        = 0x37A,
@@ -537,6 +543,16 @@ namespace Framework.Constants
         MoveJump                                 = 0x44B, // unhandled
         MoveFallLand                             = 0x78B, // unhandled
         MoveTurnMouse                            = 0x46F, // unhandled
+
+        #endregion
+
+        #region Gossip
+        TalkToGossip                             = 0x764,
+        #endregion
+
+        #region Specialization
+        SetSpecialization                        = 0x2FF,
+        LearnTalents                             = 0x136,
         #endregion
     }
 

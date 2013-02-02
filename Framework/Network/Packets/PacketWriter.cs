@@ -170,6 +170,10 @@ namespace Framework.Network.Packets
         public void WriteString(string data)
         {
             byte[] sBytes = Encoding.ASCII.GetBytes(data);
+
+            if (sBytes.Length == 0)
+                sBytes = new byte[1];
+
             this.WriteBytes(sBytes);
         }
 
@@ -180,6 +184,13 @@ namespace Framework.Network.Packets
             TimeSpan ts = currentDate - baseDate;
 
             WriteUInt32(Convert.ToUInt32(ts.TotalSeconds));
+        }
+
+        public void WritePackedTime()
+        {
+            DateTime currentDate = DateTime.Now;
+
+            WriteUInt32(Convert.ToUInt32((currentDate.Year - 100) << 24 | currentDate.Month << 20 | (currentDate.Day - 1) << 14 | (int)currentDate.DayOfWeek << 11 | currentDate.Hour << 6 | currentDate.Minute));
         }
 
         public void WriteGuid(ulong guid)

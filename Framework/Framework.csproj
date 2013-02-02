@@ -62,11 +62,15 @@
     <Compile Include="Console\Commands\AccountCommands.cs" />
     <Compile Include="Constants\AccountDataTypes.cs" />
     <Compile Include="Constants\Authentication\AuthResults.cs" />
+    <Compile Include="Constants\Class.cs" />
     <Compile Include="Constants\DBCEnums.cs" />
+    <Compile Include="Constants\DBTypes.cs" />
     <Compile Include="Constants\Guids\HighGuidMask.cs" />
     <Compile Include="Constants\Guids\HighGuidType.cs" />
     <Compile Include="Constants\ItemSettings\InventoryResult.cs" />
+    <Compile Include="Constants\LevelStatInfo.cs" />
     <Compile Include="Constants\MessageTypes.cs" />
+    <Compile Include="Constants\Misc.cs" />
     <Compile Include="Constants\ObjectSettings\MovementSpeeds.cs" />
     <Compile Include="Constants\Movement\MovementFlagMasks.cs" />
     <Compile Include="Constants\Movement\MovementFlags.cs" />
@@ -114,6 +118,7 @@
     <Compile Include="ObjectDefines\Realm.cs" />
     <Compile Include="ObjectDefines\Vector4.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Race.cs" />
     <Compile Include="Singleton\Singleton.cs" />
     <Compile Include="Singleton\SingletonBase.cs" />
   </ItemGroup>

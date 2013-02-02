@@ -40,11 +40,15 @@ namespace Framework.DBC
         public static Dictionary<uint, FactionTemplate> FactionTemplateStorage;
         public static Dictionary<uint, GameObjectDisplayInfo> GameObjectDisplayInfoStorage;
         public static Dictionary<uint, GlyphProperties> GlyphPropertiesStorage;
+        public static Dictionary<uint, ChrSpecialization> SpecializationStorage;
+        public static Dictionary<uint, SpecializationSpell> SpecializationSpellStorage;
+        public static Dictionary<uint, Spell> SpellStorage;
+        public static Dictionary<uint, SpellLevels> SpellLevelStorage;
+        public static Dictionary<uint, Talent> TalentStorage;
         public static Dictionary<uint, GlyphSlot> GlyphSlotStorage;
         public static Dictionary<uint, LiquidType> LiquidTypeStorage;
         public static Dictionary<uint, Map> MapStorage;
         public static Dictionary<uint, MountCapability> MountCapabilityStorage;
-        public static Dictionary<uint, Talent> TalentStorage;
         public static Dictionary<uint, TaxiNodes> TaxiNodesStorage;
         public static Dictionary<uint, TaxiPath> TaxiPathStorage;
         public static Dictionary<uint, TaxiPathNode> TaxiPathNodeStorage;

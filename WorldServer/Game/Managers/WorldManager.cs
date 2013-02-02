@@ -113,6 +113,7 @@ namespace WorldServer.Game.Managers
 
             Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref obj, updateFlags);
 
+            obj.SetUpdateFields();
             obj.WriteUpdateFields(ref updateObject);
             obj.WriteDynamicUpdateFields(ref updateObject);
         }
@@ -175,7 +176,10 @@ namespace WorldServer.Game.Managers
 
         public IEnumerable<Character> GetInRangeCharacter(WorldObject obj)
         {
-            foreach (var c in Sessions.ToList())
+            var tempSessions = new Dictionary<ulong, WorldClass>(Sessions);
+            tempSessions.Remove(obj.Guid);
+
+            foreach (var c in tempSessions.ToList())
                 if (!obj.ToCharacter().InRangeObjects.ContainsKey(c.Key))
                     if (obj.CheckUpdateDistance(c.Value.Character))
                         yield return c.Value.Character;
@@ -183,7 +187,10 @@ namespace WorldServer.Game.Managers
 
         public IEnumerable<Character> GetOutOfRangeCharacter(WorldObject obj)
         {
-            foreach (var c in Sessions.ToList())
+            var tempSessions = new Dictionary<ulong, WorldClass>(Sessions);
+            tempSessions.Remove(obj.Guid);
+
+            foreach (var c in tempSessions.ToList())
                 if (obj.ToCharacter().InRangeObjects.ContainsKey(c.Key))
                     if (!obj.CheckUpdateDistance(c.Value.Character))
                         yield return c.Value.Character;

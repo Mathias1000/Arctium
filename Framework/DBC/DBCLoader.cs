@@ -45,6 +45,10 @@ namespace Framework.DBC
             DBCStorage.MapStorage = DBCReader.ReadDBC<Map>(DBCStorage.MapStrings, DBCFmt.MapEntryfmt, "Map.dbc");
             DBCStorage.MountCapabilityStorage = DBCReader.ReadDBC<MountCapability>(null, DBCFmt.MountCapabilityfmt, "MountCapability.dbc");
             DBCStorage.NameGenStorage = DBCReader.ReadDBC<NameGen>(DBCStorage.NameGenStrings, DBCFmt.NameGenfmt, "NameGen.dbc");
+            DBCStorage.SpecializationStorage = DBCReader.ReadDBC<ChrSpecialization>(null, DBCFmt.ChrSpecializationfmt, "ChrSpecialization.dbc");
+            DBCStorage.SpecializationSpellStorage = DBCReader.ReadDBC<SpecializationSpell>(null, DBCFmt.SpecializationSpellfmt, "SpecializationSpells.dbc");
+            DBCStorage.SpellStorage = DBCReader.ReadDBC<Spell>(null, DBCFmt.Spellfmt, "Spell.dbc");
+            DBCStorage.SpellLevelStorage = DBCReader.ReadDBC<SpellLevels>(null, DBCFmt.SpellLevelsfmt, "SpellLevels.dbc");
             DBCStorage.TalentStorage = DBCReader.ReadDBC<Talent>(null, DBCFmt.TalentEntryfmt, "Talent.dbc");
             DBCStorage.TaxiNodesStorage = DBCReader.ReadDBC<TaxiNodes>(DBCStorage.TaxiNodesStrings, DBCFmt.TaxiNodesfmt, "TaxiNodes.dbc");
             DBCStorage.TaxiPathStorage = DBCReader.ReadDBC<TaxiPath>(null, DBCFmt.TaxiPathEntryfmt, "TaxiPath.dbc");

@@ -36,6 +36,9 @@ namespace WorldServer.Game.PacketHandler
         [Opcode(ClientMessage.EnumCharacters, "16357")]
         public static void HandleEnumCharactersResult(ref PacketReader packet, ref WorldClass session)
         {
+            // Set existing character from last world session to null
+            session.Character = null;
+
             DB.Realms.Execute("UPDATE accounts SET online = 1 WHERE id = ?", session.Account.Id);
 
             SQLResult result = DB.Characters.Select("SELECT * FROM characters WHERE accountid = ?", session.Account.Id);
@@ -271,7 +274,10 @@ namespace WorldServer.Game.PacketHandler
             WorldMgr.WriteAccountData(AccountDataMasks.CharacterCacheMask, ref session);
 
             MiscHandler.HandleMessageOfTheDay(ref session);
+            TimeHandler.HandleSendNewTimeSpeed(ref session);
+            SpecializationHandler.HandleTalentUpdate(ref session);
             SpellHandler.HandleSendKnownSpells(ref session);
+            MiscHandler.HandleUpdateActionButtons(ref session);
 
             if (session.Character.LoginCinematic)
                 CinematicHandler.HandleStartCinematic(ref session);

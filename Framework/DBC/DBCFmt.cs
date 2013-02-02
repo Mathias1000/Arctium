@@ -26,6 +26,7 @@ namespace Framework.DBC
         public static string ChrClassesEntryfmt = "nixsxxxixiixxxxxxx";
         public static string ChrRacesEntryfmt = "nxixiixixxxxixsxxxxxxxxxxxxxxxxxxxxx";
         public static string ChrPowerTypesfmt = "nii";
+        public static string ChrSpecializationfmt = "nxiixixixxxxxx";
         public static string CharStartOutfitfmt = "xiiiiiiiiiiiiiiiiiiiiiiiiixxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
         public static string ChatChannelsEntryfmt = "nixsx";
         public static string ItemClassEntryfmt = "nxfx";
@@ -40,6 +41,9 @@ namespace Framework.DBC
         public static string MapEntryfmt = "nxiixsixxixiffxixii";
         public static string MountCapabilityfmt = "niiiiiii";
         public static string NameGenfmt = "nsii";
+        public static string SpecializationSpellfmt = "xiiix";
+        public static string Spellfmt = "nxxxxixxxiiiiiiiiiiiiiiii";
+        public static string SpellLevelsfmt = "nixiii";
         public static string TalentEntryfmt = "nxiiixxxiix";
         public static string TaxiNodesfmt = "nifffsiixxx";
         public static string TaxiPathEntryfmt = "niii";
