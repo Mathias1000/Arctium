@@ -1648,41 +1648,42 @@ namespace WorldServer.Game.Packets.PacketHandler
                 Z = packet.ReadFloat()
             };
 
-            guidMask[2] = BitUnpack.GetBit();
-
-            bool HasPitch = !BitUnpack.GetBit();
-
-            guidMask[0] = BitUnpack.GetBit();
-
-            bool Unknown2 = BitUnpack.GetBit();
-
-            movementValues.HasRotation = !BitUnpack.GetBit();
-            movementValues.IsAlive = !BitUnpack.GetBit();
-
-            bool Unknown4 = BitUnpack.GetBit();
-            bool Unknown = BitUnpack.GetBit();
-
             uint counter = BitUnpack.GetBits<uint>(24);
 
-            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
-            bool Unknown3 = BitUnpack.GetBit();
+            guidMask[2] = BitUnpack.GetBit();
 
-            guidMask[7] = BitUnpack.GetBit();
-
-            movementValues.IsTransport = BitUnpack.GetBit();
             bool HasTime = !BitUnpack.GetBit();
-
-            guidMask[5] = BitUnpack.GetBit();
 
             bool HasSplineElevation = !BitUnpack.GetBit();
 
-            guidMask[3] = BitUnpack.GetBit();
+            guidMask[6] = BitUnpack.GetBit();
+            guidMask[0] = BitUnpack.GetBit();
 
-            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+            movementValues.IsTransport = BitUnpack.GetBit();
+
+            bool Unknown3 = BitUnpack.GetBit();
+            bool Unknown = BitUnpack.GetBit();
+
+            guidMask[4] = BitUnpack.GetBit();
+
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+
+            movementValues.HasRotation = !BitUnpack.GetBit();
+
+            bool Unknown2 = BitUnpack.GetBit();
 
             guidMask[1] = BitUnpack.GetBit();
-            guidMask[4] = BitUnpack.GetBit();
-            guidMask[6] = BitUnpack.GetBit();
+
+            movementValues.IsAlive = !BitUnpack.GetBit();
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+
+            guidMask[5] = BitUnpack.GetBit();
+            guidMask[7] = BitUnpack.GetBit();
+            guidMask[3] = BitUnpack.GetBit();
+
+            bool Unknown4 = BitUnpack.GetBit();
 
             /*if (movementValues.IsTransport)
             {
@@ -1703,22 +1704,22 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             if (movementValues.HasMovementFlags2)
                 movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
-
+        
             if (movementValues.HasMovementFlags)
                 movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
 
-            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
             if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
 
             for (int i = 0; i < counter; i++)
                 packet.ReadUInt32();
 
-            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
             if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
             if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
 
             /*if (movementValues.IsTransport)
             {
@@ -1740,6 +1741,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             	if ( vehicleUnknown2 ) uint _27 = packet.ReadUInt32();
             	if (vehicleGuidMask[1]) vehicleGuidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
             }*/
+           // return
 
             if (HasPitch)
                 packet.ReadFloat(); // float _28
