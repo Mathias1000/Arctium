@@ -25,6 +25,7 @@ using Framework.DBC;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Game.ObjectDefines;
 using Talent = WorldServer.Game.ObjectDefines.Talent;
+using WorldServer.Game.WorldEntities.Inventory;
 
 namespace WorldServer.Game.WorldEntities
 {
@@ -55,6 +56,8 @@ namespace WorldServer.Game.WorldEntities
         public UInt32 PrimarySpec;
         public UInt32 SecondarySpec;
 
+        public bool IsAlive;
+
         public Dictionary<ulong, WorldObject> InRangeObjects = new Dictionary<ulong, WorldObject>();
 
         public List<ActionButton> ActionButtons = new List<ActionButton>();
@@ -62,7 +65,8 @@ namespace WorldServer.Game.WorldEntities
         public List<PlayerSpell> SpellList = new List<PlayerSpell>();
         public List<Talent> TalentList = new List<Talent>();
         public List<PowerTypes> Powers;
-
+        public PlayerInventory Inventory;
+ 
         public Character(UInt64 guid, int updateLength = (int)PlayerFields.End) : base(updateLength)
         {
             SQLResult result = DB.Characters.Select("SELECT * FROM characters WHERE guid = ?", guid);
@@ -97,6 +101,8 @@ namespace WorldServer.Game.WorldEntities
             ActiveSpecGroup = result.Read<Byte>(0, "ActiveSpecGroup");
             PrimarySpec     = result.Read<UInt32>(0, "PrimarySpecId");
             SecondarySpec   = result.Read<UInt32>(0, "SecondarySpecId");
+
+            Inventory = new PlayerInventory(this);//init inv
 
             Globals.SpecializationMgr.LoadTalents(this);
             Globals.SpellMgr.LoadSpells(this);

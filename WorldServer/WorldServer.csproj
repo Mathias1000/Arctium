@@ -98,6 +98,8 @@
     <Compile Include="Game\WorldEntities\Creature.cs" />
     <Compile Include="Game\WorldEntities\GameObject.cs" />
     <Compile Include="Game\WorldEntities\Gossip.cs" />
+    <Compile Include="Game\WorldEntities\Inventory\Bag.cs" />
+    <Compile Include="Game\WorldEntities\Inventory\PlayerInventory.cs" />
     <Compile Include="Game\WorldEntities\Item.cs" />
     <Compile Include="Game\WorldEntities\Skill.cs" />
     <Compile Include="Game\WorldEntities\Spell.cs" />
