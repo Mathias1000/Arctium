@@ -34,6 +34,7 @@ namespace WorldServer.Game
         public static LevelStatManager LevelStatMgr;
         public static ItemManager ItemMgr;
 
+
         public static void InitializeManager()
         {
             ActionMgr         = ActionManager.GetInstance();

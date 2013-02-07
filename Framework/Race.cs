@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Framework
 {
-    public enum RaceId
+    public enum RaceId : byte
     {
         None = 0,
         Human = 1,

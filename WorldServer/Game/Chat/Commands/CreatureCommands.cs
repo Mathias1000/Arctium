@@ -20,11 +20,32 @@ using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Game.Spawns;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
+using Framework.Constants;
+using Framework.Network.Packets;
+using WorldServer.Game.Managers;
 
 namespace WorldServer.Game.Chat.Commands
 {
     public class CreatureCommands : Globals
     {
+        
+        [ChatCommand("Item")]
+        public static void Test2(string[] args, ref WorldClass session)
+        {
+            Item main = Globals.ItemMgr.FindData(32974);
+            
+            PacketWriter packet = new PacketWriter(JAMCMessage.ItemPushResult);
+            packet.WriteGuid(9000000000000000000);
+        byte[] item =  new byte[]
+        { 0xCE,0x80,0x00,0x00,0x00,0x00,0x85,0x4C,0x00,0x00,0x00,0x00,0x00,0x1D,0x93,0x62,0xFF,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x02,0xFA,0x1D,0x01,0x00,0x31,0x01,0x00,0x00,0x00,0x19,0x00,0x00,0x00,0x05};
+//        packet.WriteBytes(item);
+      
+            ulong iiii = System.BitConverter.ToUInt64(item, 0);
+
+            ulong tesaaa = iiii & 0xFFFFFFF;
+                session.Send(ref packet);
+            
+        }
         [ChatCommand("addnpc")]
         public static void AddNpc(string[] args, ref WorldClass session)
         {

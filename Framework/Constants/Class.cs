@@ -17,7 +17,7 @@
 
 namespace Framework.Constants
 {
-    public enum Class
+    public enum Class : byte
     {
         Warrior     = 1,
         Paladin     = 2,

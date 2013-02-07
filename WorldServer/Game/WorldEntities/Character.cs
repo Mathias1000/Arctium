@@ -18,12 +18,14 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Framework;
 using Framework.ObjectDefines;
 using Framework.Constants;
 using Framework.Database;
 using Framework.DBC;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Game.ObjectDefines;
+using WorldServer.Network;
 using Talent = WorldServer.Game.ObjectDefines.Talent;
 using WorldServer.Game.WorldEntities.Inventory;
 
@@ -55,8 +57,8 @@ namespace WorldServer.Game.WorldEntities
         public Byte ActiveSpecGroup;
         public UInt32 PrimarySpec;
         public UInt32 SecondarySpec;
-
         public bool IsAlive;
+        public WorldClass session;
 
         public Dictionary<ulong, WorldObject> InRangeObjects = new Dictionary<ulong, WorldObject>();
 
@@ -67,7 +69,7 @@ namespace WorldServer.Game.WorldEntities
         public List<PowerTypes> Powers;
         public PlayerInventory Inventory;
  
-        public Character(UInt64 guid, int updateLength = (int)PlayerFields.End) : base(updateLength)
+        public Character(UInt64 guid,ref WorldClass Session, int updateLength = (int)PlayerFields.End) : base(updateLength)
         {
             SQLResult result = DB.Characters.Select("SELECT * FROM characters WHERE guid = ?", guid);
 
@@ -101,7 +103,7 @@ namespace WorldServer.Game.WorldEntities
             ActiveSpecGroup = result.Read<Byte>(0, "ActiveSpecGroup");
             PrimarySpec     = result.Read<UInt32>(0, "PrimarySpecId");
             SecondarySpec   = result.Read<UInt32>(0, "SecondarySpecId");
-
+            this.session = Session;
             Inventory = new PlayerInventory(this);//init inv
 
             Globals.SpecializationMgr.LoadTalents(this);
@@ -157,7 +159,8 @@ namespace WorldServer.Game.WorldEntities
             SetUpdateField<Byte>((int)PlayerFields.ArenaFaction, 0, 3);
             SetUpdateField<Int32>((int)PlayerFields.WatchedFactionIndex, -1);
             SetUpdateField<Int32>((int)PlayerFields.XP, 0);
-            SetUpdateField<Int32>((int)PlayerFields.NextLevelXP, 400);
+            SetUpdateField<Int32>((int)PlayerFields.NextLevelXP, (int)Globals.LevelStatMgr.GetXpForLevel(this.Level));
+         
 
             SetUpdateField<Int32>((int)PlayerFields.CurrentSpecID, (int)GetActiveSpecId());
 
@@ -169,6 +172,9 @@ namespace WorldServer.Game.WorldEntities
                     SetUpdateField<UInt32>((int)PlayerFields.Skill + i, Skills[i].Id);
 
             SetUpdateField<UInt32>((int)PlayerFields.HomePlayerRealm, 1);
+            SetUpdateField<UInt32>((int)ContainerFields.NumSlots, 16);
+            for (int i = 0; i < 16; i++)
+            SetUpdateField<UInt64>((int)ContainerFields.Slots +2 * i, 5513813318785073358);
         }
 
         public static string NormalizeName(string name)
@@ -224,6 +230,25 @@ namespace WorldServer.Game.WorldEntities
             }
         }
 
+
+        public void LevelUP(int level)
+        {
+        
+            LevelStatInfo pStats = LevelStatMgr.GetLevelStatInfo((RaceId)this.Race, (Class)this.Class, level);
+
+            if (pStats == null)
+                return;
+
+            this.Level = pStats.Level;
+
+            SetUpdateField<Int32>((int)PlayerFields.NextLevelXP, pStats.Level);
+            SetUpdateField<Int32>((int)PlayerFields.NextLevelXP, (int)Globals.LevelStatMgr.GetXpForLevel(this.Level));
+            
+            MiscHandler.HandleLevelupInfo(ref this.session,pStats);//Send
+            ObjectHandler.HandleUpdateObjectCreate(ref session);
+            DB.Characters.Execute("UPDATE Characters SET Level = ? WHERE guid= ?", level,Guid);
+
+        }
         // Temp disabled
         /*
         public void ModifyMoney(UInt64 value)

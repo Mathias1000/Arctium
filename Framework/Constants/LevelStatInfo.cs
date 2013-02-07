@@ -10,7 +10,8 @@ namespace Framework.Constants
     {
         public Class Class;
         public RaceId Race;
-        public int Level;
+        public byte Level;
+        public UInt64 xpforLevel;
 
         public int[] Stats = new int[(int)StatType.End];
 

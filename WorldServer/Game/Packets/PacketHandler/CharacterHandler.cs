@@ -263,7 +263,7 @@ namespace WorldServer.Game.PacketHandler
             ulong guid = GuidUnpacker.GetGuid(guidMask, guidBytes);
             Log.Message(LogType.DEBUG, "Character with Guid: {0}, AccountId: {1} tried to enter the world.", guid, session.Account.Id);
 
-            session.Character = new Character(guid);
+            session.Character = new Character(guid,ref session);
 
             if (!WorldMgr.AddSession(guid, ref session))
             {

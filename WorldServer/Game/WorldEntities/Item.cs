@@ -41,7 +41,7 @@ namespace WorldServer.Game.WorldEntities
             Data.DisplayId                  = (Int32)itemEntry.DisplayId;
 
             Data.Quality                    = (Int32)itemSparse.Quality;
-
+            
             for (int i = 0; i < Data.Flags.Capacity; i++)
                 Data.Flags.Add((int)itemSparse.Flags[i]);
 

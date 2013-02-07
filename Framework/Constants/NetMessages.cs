@@ -433,6 +433,8 @@ namespace Framework.Constants
         SendUnlearnSpells                        = 0xDF5,
         RefreshComponent                         = 0xDB9,
         InventoryChangeFailure                   = 0x529,
+        LevelUPInfo                              = 0xEC8,
+      
     }
 
     [Flags]
@@ -565,6 +567,28 @@ namespace Framework.Constants
         #region Specialization
         SetSpecialization                        = 0x2FF,
         LearnTalents                             = 0x136,
+
+
+        #endregion
+
+        #region Item
+        //Todo find corectly Opcodes for Items
+        ItemNameQuery = 0xFFF,
+        AutoEquipItem = 0xFFF,
+        DestroyItem   = 0xFFF,
+        UseItem       = 0xFFF,
+        OpenItem      = 0xFFF,
+        SwapInvItem   = 0xFFF,
+        SwapItem      = 0xFFF,
+        AutoStoreBagItem = 0xFFF,
+        SetAmmo = 0xFFF,
+        SplitItem = 0xFFF,
+        SocketGems = 0xFFF,
+        ItemQuerySingle = 0x872,
+
+        SetEquiptmentSet = 0xFFF,
+        DeleteEquiptmentSet = 0xFFF,
+        UseEquiptmentSet
 
 
         #endregion

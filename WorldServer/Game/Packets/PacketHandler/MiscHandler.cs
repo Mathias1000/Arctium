@@ -170,6 +170,26 @@ namespace WorldServer.Game.Packets.PacketHandler
             ActionMgr.AddActionButton(pChar, newAction, true);
             Log.Message(LogType.DEBUG, "Character (Guid: {0}) added action button {1} to slot {2}.", pChar.Guid, actionId, slotId);
         }
+        public static void HandleLevelupInfo(ref WorldClass sessaion, LevelStatInfo info)
+        {
+            PacketWriter packet = new PacketWriter(JAMCMessage.LevelUPInfo);
+
+            packet.WriteUInt32(info.Level);
+            packet.WriteUInt32((uint)sessaion.Character.GetBaseHealth());
+            packet.WriteUInt32((uint)sessaion.Character.GetBaseMana());
+            for (int i = 0; i < sessaion.Character.Powers.Count; i++)
+            {
+                packet.WriteUInt32((uint)sessaion.Character.Powers[i]);
+            }
+
+            packet.WriteUInt32((uint)info.Strenght);
+            packet.WriteUInt32((uint)info.Agility);
+            packet.WriteUInt32((uint)info.Stamina);
+            packet.WriteUInt32((uint)info.Intellect);
+            packet.WriteUInt32((uint)info.Spirit);
+            sessaion.Send(ref packet);
+
+        }
 
         public static void HandleUpdateActionButtons(ref WorldClass session)
         {

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 using Framework.Singleton;
 using Framework.Constants;
 using Framework;
@@ -23,11 +21,12 @@ namespace WorldServer.Game.Managers
 
             for (int r = 0; r < result.Count; r++)
             {
+        
                 LevelStatInfo Stat = new LevelStatInfo
                 {
                     Race = (RaceId)result.Read<Int32>(r, "Race"),
                     Class = (Class)result.Read<Int32>(r, "Class"),
-                    Level = result.Read<Int32>(r, "Level"),
+                    Level = result.Read<Byte>(r, "Level"),
 
                     Strenght = result.Read<Int32>(r, "Str"),
                     Agility = result.Read<Int32>(r, "agi"),
@@ -35,10 +34,25 @@ namespace WorldServer.Game.Managers
                     Intellect = result.Read<Int32>(r, "inte"),
                     Spirit = result.Read<Int32>(r, "Spi"),
                 };
+                SQLResult XpResult = DB.World.Select("SELECT * FROM player_xp_for_level WHERE lvl = ?", Stat.Level);
+
+                if(XpResult.Count != 0)
+                Stat.xpforLevel = XpResult.Read<UInt64>(0,"xp_for_next_level");
+
                 CharacterLevelStats.Add(Stat);
             
             }
             Log.Message(LogType.DB, "Loaded {0} CharacterLevelStats.", CharacterLevelStats.Count);
+        }
+
+        public LevelStatInfo GetLevelStatInfo(RaceId Race, Class pClass, int level)
+        {
+            return CharacterLevelStats.Find(m => m.Level == level && m.Class == pClass && m.Race == Race);
+        }
+
+        public ulong GetXpForLevel(int level)
+        {
+            return CharacterLevelStats.Find(m => m.Level == level).xpforLevel;
         }
 
         public void Initialize()
