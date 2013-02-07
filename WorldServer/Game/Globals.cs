@@ -32,6 +32,7 @@ namespace WorldServer.Game
         public static SpellManager SpellMgr;
         public static WorldManager WorldMgr;
         public static LevelStatManager LevelStatMgr;
+        public static ItemManager ItemMgr;
 
         public static void InitializeManager()
         {
@@ -46,6 +47,7 @@ namespace WorldServer.Game
             ObjectMgr         = ObjectManager.GetInstance();
             WorldMgr          = WorldManager.GetInstance();
             LevelStatMgr      = LevelStatManager.GetInstance();
+            ItemMgr           = ItemManager.GetInstance();
         }
     }
 }

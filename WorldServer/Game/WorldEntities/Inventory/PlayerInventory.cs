@@ -11,11 +11,17 @@ namespace WorldServer.Game.WorldEntities.Inventory
 {
     public class PlayerInventory : ConcurrentDictionary<int,Bag>
     {
-        public Character Owner { get; set; }
-       
+        public Character Owner { get; private set; }
+       public int MaxInventorySlots { get { return GetMaxItemCount(); } }
+
+
         public PlayerInventory(Character pOwner)
         {
             this.Owner = pOwner;
+            this.TryAdd(0, new Bag
+                {
+                   MaxitemCount = 16,//default inventory
+                });
         }
         public InventoryResult TryAddBag(Bag BagContainer)
         {
@@ -32,8 +38,18 @@ namespace WorldServer.Game.WorldEntities.Inventory
                 return InventoryResult.EQUIP_ERR_INTERNAL_BAG_ERROR_2;//corectly??
 
             BagContainer.BagSlot = newBagSlot;
-
+           
             return InventoryResult.EQUIP_ERR_OK;
+        }
+
+        private int GetMaxItemCount()
+        {
+            int Count = 0;
+            foreach (Bag Value in this.Values)
+            {
+                Count += Value.MaxitemCount;
+            }
+            return Count;
         }
 
         public InventoryResult TryRemoveBag(Bag BagContainer)
@@ -52,6 +68,7 @@ namespace WorldServer.Game.WorldEntities.Inventory
 
             return InventoryResult.EQUIP_ERR_OK;
         }
+
         public bool GetBagContainer(byte pSlot, out Bag Container)
         {
             Container = null;
@@ -60,6 +77,7 @@ namespace WorldServer.Game.WorldEntities.Inventory
 
             return true;
         }
+
         public bool GetFreeFreeBagSlot(out byte pSlot)
         {
             pSlot = 0;
@@ -69,6 +87,47 @@ namespace WorldServer.Game.WorldEntities.Inventory
                 return false;
 
             pSlot = (byte)freeKeys.First();
+            return true;
+        }
+        public InventoryResult TrySwap(byte srcBagSlot, byte srcSlot, byte dstBagSlot, byte dstSlot)
+        {
+            Item SrcItem = null;
+            Item dstItem = null;
+            if(!GetItemFromInventory(srcSlot,srcBagSlot,out SrcItem))
+            {
+                return InventoryResult.EQUIP_ERR_ITEM_NOT_FOUND;
+            }
+            else if (!GetItemFromInventory(dstSlot, dstBagSlot, out dstItem))
+            {
+                return InventoryResult.EQUIP_ERR_ITEM_NOT_FOUND_2;
+            }
+            else
+            {
+                if (SrcItem == null)
+                {
+                   return InventoryResult.EQUIP_ERR_SLOT_EMPTY;
+                }
+                else if (dstItem == null)
+                {
+                    return InventoryResult.EQUIP_ERR_SLOT_EMPTY;
+                }
+
+                //cann not uses
+                //Cant do right now
+                //todo equip
+
+            }
+            return InventoryResult.EQUIP_ERR_OK;
+        }
+        public bool GetItemFromInventory(byte slot, byte BagSlot, out Item pItem)
+        {
+            pItem = null;
+
+            if (this[BagSlot] == null)
+                return false;
+
+            pItem = this[BagSlot][slot];
+
             return true;
         }
         private void CheckInteract(out InventoryResult Result)

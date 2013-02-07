@@ -68,6 +68,7 @@
     <Compile Include="Constants\Guids\HighGuidMask.cs" />
     <Compile Include="Constants\Guids\HighGuidType.cs" />
     <Compile Include="Constants\ItemSettings\InventoryResult.cs" />
+    <Compile Include="Constants\ItemSettings\InventorySlot.cs" />
     <Compile Include="Constants\LevelStatInfo.cs" />
     <Compile Include="Constants\MessageTypes.cs" />
     <Compile Include="Constants\Misc.cs" />
