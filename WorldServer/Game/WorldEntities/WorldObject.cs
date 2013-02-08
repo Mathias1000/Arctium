@@ -20,6 +20,7 @@ using Framework.ObjectDefines;
 using System;
 using System.Collections;
 using WorldServer.Game.Spawns;
+using WorldServer.Game.ObjectDefines;
 
 namespace WorldServer.Game.WorldEntities
 {
@@ -29,6 +30,7 @@ namespace WorldServer.Game.WorldEntities
         public UInt64 Guid;
         public Vector4 Position;
         public UInt32 Map;
+        public ClassBasesStats BaseStats;
 
         // Some data
         public UInt64 TargetGuid;

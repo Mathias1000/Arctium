@@ -117,17 +117,19 @@ namespace WorldServer.Game.Managers
 
                 for (int i = 0; i < Stats.QuestItemId.Capacity; i++)
                     Stats.QuestItemId.Add(result.Read<Int32>(r, "QuestItemId", i));
-                Byte MinLevel = result.Read<Byte>(r, "Min_Level");
-                Byte MaxLevel = result.Read<Byte>(r, "Max_Level");
-                if(MaxLevel < MinLevel)
-                    MinLevel = MaxLevel;
+
+                byte Min_Level = result.Read<byte>(r, "Min_Level");
+                byte Max_Level = result.Read<byte>(r, "Max_Level");
+                if(Max_Level < Min_Level)
+                    Min_Level = Max_Level;
 
                 Add(new Creature
                 {
                     Data = new CreatureData
                     {
                         Health = result.Read<Int32>(r, "Health"),
-               
+                        MaxLevel = Max_Level,
+                        MinLevel = Min_Level,
                         Class = result.Read<Byte>(r, "Class"),
                         Faction = result.Read<Int32>(r, "Faction"),
                         Scale = result.Read<Int32>(r, "Scale"),

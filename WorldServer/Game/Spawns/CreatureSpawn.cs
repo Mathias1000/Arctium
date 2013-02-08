@@ -31,7 +31,7 @@ namespace WorldServer.Game.Spawns
         public Int32 Id;
         public Creature Creature;
         public Byte Level;
-        public ClassBasesStats BaseStats;
+
 
         public CreatureSpawn(int updateLength = (int)UnitFields.End) : base(updateLength) { }
 
@@ -52,6 +52,8 @@ namespace WorldServer.Game.Spawns
         public void CreateData(Creature creature)
         {
             Creature = creature;
+            this.Level = Creature.Data.GetLevel();
+            this.BaseStats = Globals.DataMgr.FindCreatureBaseStats(this.Level);
         }
 
         public bool AddToDB()
@@ -69,8 +71,9 @@ namespace WorldServer.Game.Spawns
         {
             CreateFullGuid();
             CreateData(Creature);
-            this.Level = Creature.Data.GetLevel();
-            this.BaseStats = Globals.DataMgr.FindCreatureBaseStats(this.Level);
+
+            if (this.BaseStats == null)//when stats not foz
+                return;
 
             Globals.SpawnMgr.AddSpawn(this);
 
