@@ -36,7 +36,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             if (ChatCommandParser.CheckForCommand(chatMessage))
                 ChatCommandParser.ExecuteChatHandler(chatMessage, ref session);
             else
-                SendMessageByType(ref session, MessageType.ChatMessageSay, language, chatMessage);
+                SendMessageByType(ref session, MessageType.ChatMessageSay, language, chatMessage,true);
         }
 
         [Opcode(ClientMessage.ChatMessageYell, "16357")]
@@ -68,7 +68,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             SendMessageByType(ref session, MessageType.ChatMessageWhisperInform, language, chatMessage);
         }
 
-        public static void SendMessageByType(ref WorldClass session, MessageType type, int language, string chatMessage)
+        public static void SendMessageByType(ref WorldClass session, MessageType type, int language, string chatMessage, bool Broadcast = false)
         {
             PacketWriter messageChat = new PacketWriter(LegacyMessage.MessageChat);
             ulong guid = session.Character.Guid;
@@ -81,8 +81,13 @@ namespace WorldServer.Game.Packets.PacketHandler
             messageChat.WriteUInt32((uint)chatMessage.Length + 1);
             messageChat.WriteCString(chatMessage);
             messageChat.WriteUInt16(0);
-
-            session.Send(ref messageChat);
+            if (Broadcast)
+            {
+                Globals.WorldMgr.SendToInRangeCharacter(session.Character, messageChat);
+                session.Send(ref messageChat);
+            }
+            else
+                session.Send(ref messageChat);
         }
     }
 }
