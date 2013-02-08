@@ -22,6 +22,7 @@ using Framework.Network.Packets;
 using Framework.ObjectDefines;
 using System;
 using WorldServer.Game.WorldEntities;
+using WorldServer.Game.ObjectDefines;
 
 namespace WorldServer.Game.Spawns
 {
@@ -29,6 +30,8 @@ namespace WorldServer.Game.Spawns
     {
         public Int32 Id;
         public Creature Creature;
+        public Byte Level;
+        public ClassBasesStats BaseStats;
 
         public CreatureSpawn(int updateLength = (int)UnitFields.End) : base(updateLength) { }
 
@@ -66,6 +69,8 @@ namespace WorldServer.Game.Spawns
         {
             CreateFullGuid();
             CreateData(Creature);
+            this.Level = Creature.Data.GetLevel();
+            this.BaseStats = Globals.DataMgr.FindCreatureBaseStats(this.Level);
 
             Globals.SpawnMgr.AddSpawn(this);
 
@@ -92,6 +97,7 @@ namespace WorldServer.Game.Spawns
 
         public override void SetUpdateFields()
         {
+
             // ObjectFields
             SetUpdateField<UInt64>((int)ObjectFields.Guid, Guid);
             SetUpdateField<UInt64>((int)ObjectFields.Data, 0);
@@ -121,9 +127,9 @@ namespace WorldServer.Game.Spawns
 
             SetUpdateField<Int32>((int)UnitFields.PowerRegenFlatModifier, 0);
             SetUpdateField<Int32>((int)UnitFields.PowerRegenInterruptedFlatModifier, 0);
-            SetUpdateField<Int32>((int)UnitFields.BaseHealth, 1);
-            SetUpdateField<Int32>((int)UnitFields.BaseMana, 0);
-            SetUpdateField<Int32>((int)UnitFields.Level, Creature.Data.Level);
+            SetUpdateField<Int32>((int)UnitFields.BaseHealth, BaseStats.BaseHP0);
+            SetUpdateField<Int32>((int)UnitFields.BaseMana, BaseStats.BaseMana);
+            SetUpdateField<Int32>((int)UnitFields.Level, Level);
             SetUpdateField<Int32>((int)UnitFields.FactionTemplate, Creature.Data.Faction);
             SetUpdateField<Int32>((int)UnitFields.Flags, Creature.Data.UnitFlags);
             SetUpdateField<Int32>((int)UnitFields.Flags2, Creature.Data.UnitFlags2);

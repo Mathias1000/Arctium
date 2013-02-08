@@ -74,6 +74,7 @@
     <Compile Include="Game\ObjectDefines\ActionButton.cs" />
     <Compile Include="Game\ObjectDefines\CreatureData.cs" />
     <Compile Include="Game\ObjectDefines\CreatureStats.cs" />
+    <Compile Include="Game\ObjectDefines\ClassBasesStats.cs" />
     <Compile Include="Game\ObjectDefines\GameObjectStats.cs" />
     <Compile Include="Game\ObjectDefines\ItemData.cs" />
     <Compile Include="Game\ObjectDefines\Talent.cs" />

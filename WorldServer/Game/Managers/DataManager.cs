@@ -31,11 +31,13 @@ namespace WorldServer.Game.Managers
         ConcurrentDictionary<Int32, Creature> Creatures;
         ConcurrentDictionary<Int32, GameObject> GameObjects;
         ConcurrentDictionary<Int32, Areatrigger_Teleport> Areatrigger_Teleports;
+        ConcurrentDictionary<Int32, ClassBasesStats> creature_classlevelstats;
         DataManager()
         {
             Creatures = new ConcurrentDictionary<Int32, Creature>();
             GameObjects = new ConcurrentDictionary<Int32, GameObject>();
             Areatrigger_Teleports = new ConcurrentDictionary<Int32, Areatrigger_Teleport>();
+            creature_classlevelstats = new ConcurrentDictionary<Int32, ClassBasesStats>();
 
             Initialize();
         }
@@ -65,7 +67,13 @@ namespace WorldServer.Game.Managers
 
             return creature;
         }
+        public ClassBasesStats FindCreatureBaseStats(Byte Level)
+        {
+            ClassBasesStats Stats;
+            creature_classlevelstats.TryGetValue((int)Level, out Stats);
 
+            return Stats;
+        }
         public void LoadCreatureData()
         {
             SQLResult result = DB.World.Select("SELECT cs.Id FROM creature_stats cs LEFT JOIN creature_data cd ON cs.Id = cd.Id WHERE cd.Id IS NULL");
@@ -109,23 +117,27 @@ namespace WorldServer.Game.Managers
 
                 for (int i = 0; i < Stats.QuestItemId.Capacity; i++)
                     Stats.QuestItemId.Add(result.Read<Int32>(r, "QuestItemId", i));
+                Byte MinLevel = result.Read<Byte>(r, "Min_Level");
+                Byte MaxLevel = result.Read<Byte>(r, "Max_Level");
+                if(MaxLevel < MinLevel)
+                    MinLevel = MaxLevel;
 
                 Add(new Creature
                 {
                     Data = new CreatureData
                     {
-                        Health     = result.Read<Int32>(r, "Health"),
-                        Level      = result.Read<Byte>(r, "Level"),
-                        Class      = result.Read<Byte>(r, "Class"),
-                        Faction    = result.Read<Int32>(r, "Faction"),
-                        Scale      = result.Read<Int32>(r, "Scale"),
-                        UnitFlags  = result.Read<Int32>(r, "UnitFlags"),
+                        Health = result.Read<Int32>(r, "Health"),
+               
+                        Class = result.Read<Byte>(r, "Class"),
+                        Faction = result.Read<Int32>(r, "Faction"),
+                        Scale = result.Read<Int32>(r, "Scale"),
+                        UnitFlags = result.Read<Int32>(r, "UnitFlags"),
                         UnitFlags2 = result.Read<Int32>(r, "UnitFlags2"),
-                        NpcFlags   = result.Read<Int32>(r, "NpcFlags")
+                        NpcFlags = result.Read<Int32>(r, "NpcFlags")
                     },
-
                     Stats = Stats,
                 });
+              
             }
 
             Log.Message(LogType.DB, "Loaded {0} creatures.", Creatures.Count);
@@ -135,7 +147,30 @@ namespace WorldServer.Game.Managers
         {
             return GameObjects.TryAdd(gameobject.Stats.Id, gameobject);
         }
+        public bool Add(ClassBasesStats BaseStats)
+        {
+            return creature_classlevelstats.TryAdd(BaseStats.level, BaseStats);
+        }
+        public void LoadBaseStats()
+        {
+            SQLResult result = DB.World.Select("SELECT * FROM creature_classlevelstats");
 
+                for (int r = 0; r < result.Count; r++)
+                {
+                    Add(new ClassBasesStats
+                    {
+                        level = result.Read<Byte>(r, "level"),
+                        Class = result.Read<Byte>(r, "Class"),
+                        BaseHP0 = result.Read<Int32>(r, "basehp0"),
+                        BaseHP1 = result.Read<Int32>(r, "basehp1"),
+                        BaseHP2 = result.Read<Int32>(r, "basehp2"),
+                        BaseHP3 = result.Read<Int32>(r, "basehp3"),
+                        BaseMana = result.Read<Int32>(r, "basemana"),
+                        BaseArmor = result.Read<Int32>(r, "basearmor"),
+                    });
+                }
+                Log.Message(LogType.DB, "Loaded {0} creatures levelstats.", creature_classlevelstats.Count);
+        }
         public GameObject Remove(GameObject gameobject)
         {
             GameObject removedGameObject;
@@ -232,6 +267,7 @@ namespace WorldServer.Game.Managers
             LoadAreaTriggerTeleports();
             LoadCreatureData();
             LoadGameObject();
+            LoadBaseStats();
         }
     }
 }

@@ -71,7 +71,8 @@ namespace WorldServer.Game.WorldEntities
                 Data = new CreatureData();
 
                 Data.Health     = result.Read<Int32>(0, "Health");
-                Data.Level      = result.Read<Byte>(0, "Level");
+                Data.MinLevel   = result.Read<Byte>(0, "Min_Level");
+                Data.MaxLevel   = result.Read<Byte>(0, "Max_Level");
                 Data.Class      = result.Read<Byte>(0, "Class");
                 Data.Faction    = result.Read<Int32>(0, "Faction");
                 Data.Scale      = result.Read<Int32>(0, "Scale");

@@ -23,10 +23,13 @@ using Framework.Network.Packets;
 using Framework.ObjectDefines;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using WorldServer.Game.Packets;
 using WorldServer.Game.WorldEntities;
+using WorldServer.Game.Managers;
+using WorldServer.Game;
 
 namespace WorldServer.Network
 {
@@ -123,6 +126,14 @@ namespace WorldServer.Network
             data[1] = (byte)(0xFF & (size >> 8));
             data[2] = (byte)(0xFF & opcode);
             data[3] = (byte)(0xFF & (opcode >> 8));
+        }
+
+        public void BroadcastToAllPacket(ref PacketWriter packet)
+        {
+            foreach (WorldClass session in Globals.WorldMgr.Sessions.Values)
+            {
+                session.Send(ref packet);
+            }
         }
 
         public void Send(ref PacketWriter packet)

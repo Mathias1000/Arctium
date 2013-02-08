@@ -22,12 +22,19 @@ namespace WorldServer.Game.ObjectDefines
     public class CreatureData
     {
         public Int32 Health;
-        public Byte Level;
+        public Byte MinLevel;
+        public Byte MaxLevel;
         public Byte Class;
         public Int32 Faction;
         public Single Scale;
         public Int32 UnitFlags;
         public Int32 UnitFlags2;
         public Int32 NpcFlags;
+       
+        public Byte GetLevel()
+        {
+            Random Level = new Random();
+            return (Byte)Level.Next(MinLevel, MaxLevel);
+        }
     }
 }
