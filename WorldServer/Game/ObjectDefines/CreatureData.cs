@@ -34,8 +34,7 @@ namespace WorldServer.Game.ObjectDefines
         public Byte GetLevel()
         {
             Random Level = new Random();
-           int ts = Level.Next(MinLevel, MaxLevel);
-           return 1;
+            return (Byte)Level.Next(MinLevel, MaxLevel);
         }
     }
 }
