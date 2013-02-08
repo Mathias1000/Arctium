@@ -90,6 +90,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         [Opcode(ClientMessage.ItemQuerySingle, "16357")]
         public static void HandleItemQuerySingle(ref PacketReader packet, ref WorldClass session)
         {
+       //   uint ItemID =  packet.ReadUInt32();
             //todo
         }
 

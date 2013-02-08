@@ -34,16 +34,33 @@ namespace WorldServer.Game.Chat.Commands
         {
             Item main = Globals.ItemMgr.FindData(32974);
             
-            PacketWriter packet = new PacketWriter(JAMCMessage.ItemPushResult);
-            packet.WriteGuid(9000000000000000000);
-        byte[] item =  new byte[]
-        { 0xCE,0x80,0x00,0x00,0x00,0x00,0x85,0x4C,0x00,0x00,0x00,0x00,0x00,0x1D,0x93,0x62,0xFF,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x02,0xFA,0x1D,0x01,0x00,0x31,0x01,0x00,0x00,0x00,0x19,0x00,0x00,0x00,0x05};
-//        packet.WriteBytes(item);
-      
-            ulong iiii = System.BitConverter.ToUInt64(item, 0);
-
-            ulong tesaaa = iiii & 0xFFFFFFF;
-                session.Send(ref packet);
+        PacketWriter itemPushResult = new PacketWriter(JAMCMessage.ItemPushResult);
+            BitPack BitPack = new BitPack(itemPushResult, session.Character.Guid);
+ 
+            BitPack.Write(0);//loot
+            BitPack.WriteGuidMask(7, 5, 4, 1, 3, 2, 6, 0);
+            BitPack.Write(1);//is from creature
+            BitPack.Write(0); // maybe... is created
+ 
+            BitPack.Flush();
+ 
+            itemPushResult.WriteInt32(0); // Unknown
+            BitPack.WriteGuidBytes(0, 1);
+            itemPushResult.WriteInt32(0); // Unknown
+            BitPack.WriteGuidBytes(4);
+            itemPushResult.WriteInt32(main.Data.RandomProperty); // Maybe...
+            itemPushResult.WriteUInt8(1);
+            itemPushResult.WriteInt32(0); // Unknown
+            itemPushResult.WriteInt32(0); // Unknown
+            itemPushResult.WriteInt32(0); // Unknown
+            itemPushResult.WriteInt32(1); // Unknown
+            BitPack.WriteGuidBytes(5, 7);
+            itemPushResult.WriteInt32(main.Data.Id); // Unknown
+            BitPack.WriteGuidBytes(2);
+            itemPushResult.WriteInt32(1); // Unknown
+            itemPushResult.WriteInt32((int)ContainerFields.Slots +2* 2); // -1 when added to stack
+            BitPack.WriteGuidBytes(6, 3);
+            session.Send(ref itemPushResult);
             
         }
         [ChatCommand("addnpc")]

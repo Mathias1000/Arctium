@@ -17,6 +17,7 @@
 
 using Framework.Database;
 using Framework.Logging;
+using Framework.Constants;
 using Framework.Singleton;
 using System;
 using WorldServer.Game.ObjectDefines;
@@ -29,11 +30,12 @@ namespace WorldServer.Game.Managers
     {
         ConcurrentDictionary<Int32, Creature> Creatures;
         ConcurrentDictionary<Int32, GameObject> GameObjects;
-
+        ConcurrentDictionary<Int32, Areatrigger_Teleport> Areatrigger_Teleports;
         DataManager()
         {
             Creatures = new ConcurrentDictionary<Int32, Creature>();
             GameObjects = new ConcurrentDictionary<Int32, GameObject>();
+            Areatrigger_Teleports = new ConcurrentDictionary<Int32, Areatrigger_Teleport>();
 
             Initialize();
         }
@@ -188,8 +190,46 @@ namespace WorldServer.Game.Managers
             Log.Message(LogType.DB, "Loaded {0} gameobjects.", GameObjects.Count);
         }
 
+        public void LoadAreaTriggerTeleports()
+        {
+            SQLResult result = DB.World.Select("SELECT * FROM areatrigger_teleport");
+
+                 for (int r = 0; r < result.Count; r++)
+                 {
+                     Areatrigger_Teleport tele = new Areatrigger_Teleport
+                     {
+                         AreatriggerID = result.Read<Int32>(r, "Id"),
+                         TargetMap = result.Read<UInt32>(r, "target_map"),
+                         Target_Pos = new Framework.ObjectDefines.Vector4
+                         {
+                             X = result.Read<Single>(r, "target_position_x"),
+                             Y = result.Read<Single>(r, "target_position_Y"),
+                             Z = result.Read<Single>(r, "target_position_Z"),
+                             O = result.Read<Single>(r, "target_orientation"), 
+                         }
+                     };
+                     if (!this.Areatrigger_Teleports.ContainsKey(tele.AreatriggerID))
+                     {
+                         this.Areatrigger_Teleports.TryAdd(tele.AreatriggerID, tele);
+                     }
+                     else
+                         Log.Message(LogType.DEFAULT, "Warning Duplicate Areatrigger Teleport found {0}", tele.AreatriggerID);
+                 }
+                 Log.Message(LogType.DB, "Loaded {0} Areatrigger Teleports", this.Areatrigger_Teleports.Count);
+        }
+
+        public Areatrigger_Teleport FindAreatrigger_Tele(int id)
+        {
+            Areatrigger_Teleport tele = null;
+            if (this.Areatrigger_Teleports.TryGetValue(id, out tele))
+                return tele;
+
+            return null;
+        }
+
         public void Initialize()
         {
+            LoadAreaTriggerTeleports();
             LoadCreatureData();
             LoadGameObject();
         }

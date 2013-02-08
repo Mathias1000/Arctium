@@ -240,6 +240,12 @@ namespace WorldServer.Game.Packets.PacketHandler
             uint triggerId = packet.ReadUInt32();
 
             AreaTrigger areaTrigger = DBCStorage.AreaTriggerStorage[triggerId];
+            Areatrigger_Teleport tele = Globals.DataMgr.FindAreatrigger_Tele((int)triggerId);
+            if (tele != null)
+            {
+                //todo check level and more
+                session.Character.session.Character.TeleportTo(tele.Target_Pos, tele.TargetMap);
+            }
 
             Log.Message(LogType.DEBUG, "Character (Guid: {0}) reached Areatrigger Id: {1}.", pChar.Guid, areaTrigger.Id);
         }

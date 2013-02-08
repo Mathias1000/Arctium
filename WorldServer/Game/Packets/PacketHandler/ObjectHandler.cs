@@ -33,6 +33,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             updateObject.WriteUInt16((ushort)character.Map);
             updateObject.WriteUInt32(1);
+
             updateObject.WriteUInt8((byte)UpdateType.CreateObject);
             updateObject.WriteGuid(character.Guid);
             updateObject.WriteUInt8((byte)ObjectType.Player);

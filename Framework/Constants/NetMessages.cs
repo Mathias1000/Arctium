@@ -584,7 +584,7 @@ namespace Framework.Constants
         SetAmmo = 0xFFF,
         SplitItem = 0xFFF,
         SocketGems = 0xFFF,
-        ItemQuerySingle = 0x872,
+        ItemQuerySingle = 0x7AC,
 
         SetEquiptmentSet = 0xFFF,
         DeleteEquiptmentSet = 0xFFF,
