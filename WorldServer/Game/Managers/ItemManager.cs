@@ -46,7 +46,7 @@ namespace WorldServer.Game.Managers
             return Items;
         }
 
-        public Item FindData(uint id)
+        public Item FindData(long id)
         {
             foreach (var i in Items)
                 if (i.Key == id)

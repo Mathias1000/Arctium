@@ -106,6 +106,7 @@
     <Compile Include="Game\WorldEntities\Item.cs" />
     <Compile Include="Game\WorldEntities\Skill.cs" />
     <Compile Include="Game\WorldEntities\Spell.cs" />
+    <Compile Include="Game\WorldEntities\Vendoritem.cs" />
     <Compile Include="Game\WorldEntities\WorldObject.cs" />
     <Compile Include="WorldServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

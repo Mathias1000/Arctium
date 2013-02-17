@@ -585,7 +585,8 @@ namespace Framework.Constants
         SplitItem = 0xFFF,
         SocketGems = 0xFFF,
         ItemQuerySingle = 0x7AC,
-
+        VendorTabeList = 0xF8D,
+        BuyItem = 0xCEC,
         SetEquiptmentSet = 0xFFF,
         DeleteEquiptmentSet = 0xFFF,
         UseEquiptmentSet

@@ -20,6 +20,7 @@ using Framework.Logging;
 using Framework.Constants;
 using Framework.Singleton;
 using System;
+using System.Collections.Generic;
 using WorldServer.Game.ObjectDefines;
 using WorldServer.Game.WorldEntities;
 using System.Collections.Concurrent;
@@ -28,13 +29,15 @@ namespace WorldServer.Game.Managers
 {
     public class DataManager : SingletonBase<DataManager>
     {
-        ConcurrentDictionary<Int32, Creature> Creatures;
+        ConcurrentDictionary<Int64, Creature> Creatures;
         ConcurrentDictionary<Int32, GameObject> GameObjects;
         ConcurrentDictionary<Int32, Areatrigger_Teleport> Areatrigger_Teleports;
         ConcurrentDictionary<Int32, ClassBasesStats> creature_classlevelstats;
+    //    List<Vendoritem> VendorItems;
+
         DataManager()
         {
-            Creatures = new ConcurrentDictionary<Int32, Creature>();
+            Creatures = new ConcurrentDictionary<Int64, Creature>();
             GameObjects = new ConcurrentDictionary<Int32, GameObject>();
             Areatrigger_Teleports = new ConcurrentDictionary<Int32, Areatrigger_Teleport>();
             creature_classlevelstats = new ConcurrentDictionary<Int32, ClassBasesStats>();
@@ -55,12 +58,12 @@ namespace WorldServer.Game.Managers
             return removedCreature;
         }
 
-        public ConcurrentDictionary<Int32, Creature> GetCreatures()
+        public ConcurrentDictionary<Int64, Creature> GetCreatures()
         {
             return Creatures;
         }
 
-        public Creature FindCreature(int id)
+        public Creature FindCreature(long id)
         {
             Creature creature;
             Creatures.TryGetValue(id, out creature);
@@ -135,16 +138,49 @@ namespace WorldServer.Game.Managers
                         Scale = result.Read<Int32>(r, "Scale"),
                         UnitFlags = result.Read<Int32>(r, "UnitFlags"),
                         UnitFlags2 = result.Read<Int32>(r, "UnitFlags2"),
-                        NpcFlags = result.Read<Int32>(r, "NpcFlags")
+                        NpcFlags = result.Read<Int32>(r, "NpcFlags"),
+                        // VendorItems = FindVendorItems(Stats.Id),
                     },
                     Stats = Stats,
                 });
-              
             }
-
-            Log.Message(LogType.DB, "Loaded {0} creatures.", Creatures.Count);
+            Log.Message(LogType.DB, "Loaded {0} creatures ", Creatures.Count);
         }
+        public void LoadvendorData()
+        {
+         /*   try
+            {
+                this.VendorItems = new List<Vendoritem>();
+                SQLResult VendorResult = DB.World.Select("SELECT * FROM npc_vendor");
+                if (VendorResult.Count != 0)
+                {
+                    for (int r2 = 0; r2 < VendorResult.Count; r2++)
+                    {
+                        Item pItem = Globals.ItemMgr.FindData(VendorResult.Read<Int64>(r2, "ItemID"));
+                        Creature pCreature = FindCreature(VendorResult.Read<Int32>(r2, "entry"));
+                        if (pItem != null)
+                        {
 
+                            Vendoritem VendorItem = new Vendoritem
+                            {
+                                Data = pItem.Data,
+                                VendorMaxCount = VendorResult.Read<Int32>(r2, "maxcount"),
+                                Entry = VendorResult.Read<Int32>(r2, "entry"),
+                            };
+                            this.VendorItems.Add(VendorItem);
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+                Log.Message(LogType.DB, "Loaded {0} vendoritems", this.VendorItems.Count);*/
+        }
+       /*public List<Vendoritem> FindVendorItems(int entry)
+        {
+            return this.VendorItems.FindAll(m => m.Entry == entry);
+        }*/
         public bool Add(GameObject gameobject)
         {
             return GameObjects.TryAdd(gameobject.Stats.Id, gameobject);
@@ -267,6 +303,7 @@ namespace WorldServer.Game.Managers
         public void Initialize()
         {
             LoadAreaTriggerTeleports();
+                        LoadvendorData();
             LoadCreatureData();
             LoadGameObject();
             LoadBaseStats();

@@ -17,6 +17,7 @@
 
 using Framework.Database;
 using System;
+using System.Collections.Generic;
 using WorldServer.Game.ObjectDefines;
 
 namespace WorldServer.Game.WorldEntities
@@ -25,12 +26,10 @@ namespace WorldServer.Game.WorldEntities
     {
         public CreatureStats Stats;
         public CreatureData Data;
-
         public Creature() { }
         public Creature(int id)
         {
             SQLResult result = DB.World.Select("SELECT * FROM creature_stats WHERE id = ?", id);
-
             if (result.Count != 0)
             {
                 Stats = new CreatureStats();

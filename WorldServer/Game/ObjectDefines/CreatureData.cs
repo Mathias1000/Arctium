@@ -16,6 +16,8 @@
  */
 
 using System;
+using System.Collections.Generic;
+using WorldServer.Game.WorldEntities;
 
 namespace WorldServer.Game.ObjectDefines
 {
@@ -30,6 +32,7 @@ namespace WorldServer.Game.ObjectDefines
         public Int32 UnitFlags;
         public Int32 UnitFlags2;
         public Int32 NpcFlags;
+        public List<Vendoritem> VendorItems;
        
         public Byte GetLevel()
         {

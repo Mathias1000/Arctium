@@ -18,16 +18,23 @@
 using System;
 using Framework.DBC;
 using WorldServer.Game.ObjectDefines;
+using System.Collections;
+using Framework.Constants;
 
 namespace WorldServer.Game.WorldEntities
 {
-    public class Item
+    public class Item : WorldObject
     {
         public ItemData Data;
 
-        public Item() { }
+        public Item()
+        {
+            MaskSize = 965;
+            Mask = new BitArray( 965, false);
+        }
         public Item(int id)
         {
+       
             var itemEntry                   = DB2Storage.ItemEntryStorage[(uint)id];
             var itemSparse                  = DB2Storage.ItemSparseStorage[(uint)id];
 
@@ -128,5 +135,6 @@ namespace WorldServer.Game.WorldEntities
             Data.CurrencySubstitutionCount  = (Int32)itemSparse.CurrencySubstitutionCount;
             Data.SoundOverrideSubClassId    = (Int32)itemEntry.SoundOverrideSubClassId;
         }
+
     }
 }

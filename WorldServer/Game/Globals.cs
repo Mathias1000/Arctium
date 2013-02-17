@@ -42,13 +42,13 @@ namespace WorldServer.Game
             SkillMgr          = SkillManager.GetInstance();
             SpellMgr          = SpellManager.GetInstance();
             SpecializationMgr = SpecializationManager.GetInstance();
+            ItemMgr = ItemManager.GetInstance();
             DataMgr           = DataManager.GetInstance();
             SpawnMgr          = SpawnManager.GetInstance();
             GossipMgr         = GossipManager.GetInstance();
             ObjectMgr         = ObjectManager.GetInstance();
             WorldMgr          = WorldManager.GetInstance();
             LevelStatMgr      = LevelStatManager.GetInstance();
-            ItemMgr           = ItemManager.GetInstance();
         }
     }
 }

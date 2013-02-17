@@ -189,7 +189,24 @@ namespace WorldServer.Game.WorldEntities
 
             return (ActiveSpecGroup == 0 && PrimarySpec != 0) ? PrimarySpec : SecondarySpec;
         }
+        public float GetReputationPriceDiscount(Creature creature)
+        {
+            /*   FactionTemplateEntry const* vendor_faction = creature->getFactionTemplateEntry();
+               if (!vendor_faction || !vendor_faction->faction)
+                   return 1.0f;
 
+               float goblin = 0.0f;
+
+               if (HasAura(69044))
+                   goblin = 0.2f;
+
+               ReputationRank rank = GetReputationRank(vendor_faction->faction);
+               if (rank <= REP_NEUTRAL)
+                   return 1.0f;
+                   */
+            //return 1.0f - goblin - 0.05f * (rank - REP_NEUTRAL);
+            return 1.0f;
+        }
         public void TeleportTo(Vector4 vector, uint mapId)
         {
             var session = Globals.WorldMgr.GetSession(Guid);

@@ -26,7 +26,7 @@ namespace WorldServer.Game.WorldEntities
 {
     public class WorldObject : Globals
     {
-        // General object data
+        // General object datanew WorldObject
         public UInt64 Guid;
         public Vector4 Position;
         public UInt32 Map;

@@ -1,0 +1,4 @@
+ALTER TABLE `creature_data` ADD COLUMN `Min_Level`  tinyint NOT NULL AFTER `Health`,CHANGE COLUMN `Level` `Max_Level`  tinyint(4) NOT NULL DEFAULT 1 AFTER `Min_Level`;
+ALTER TABLE `creature_data` MODIFY COLUMN `Min_Level`  tinyint(4) NOT NULL DEFAULT 1 AFTER `Health`;
+
+
